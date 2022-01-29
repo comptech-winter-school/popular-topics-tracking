@@ -1,10 +1,11 @@
 package com.comptechschool.populartopicstracking;
 
+import com.comptechschool.populartopicstracking.entity.InputEntity;
 import org.apache.flink.streaming.api.functions.source.RichSourceFunction;
 
 import java.util.Random;
 
-public class DataSource extends RichSourceFunction<Long> {
+public class DataSource extends RichSourceFunction<InputEntity> {
 
     private boolean isCancelled = false;
     private final Random id = new Random();
@@ -30,9 +31,10 @@ public class DataSource extends RichSourceFunction<Long> {
     }
 
     @Override
-    public void run(SourceContext<Long> sourceContext) throws Exception {
+    public void run(SourceContext<InputEntity> sourceContext) throws Exception {
         while (!isCancelled) {
-            sourceContext.collect(Math.abs(id.nextLong() % maxValue));
+            InputEntity inputEntity = new InputEntity(Math.abs(id.nextLong() % maxValue), System.currentTimeMillis());
+            sourceContext.collectWithTimestamp(inputEntity, inputEntity.getTimestamp());
             Thread.sleep(delayMillis);
         }
     }
