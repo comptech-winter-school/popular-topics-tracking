@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class TopNStreamProcess {
 
-    private static int topSize = 3;
+    private static int topN = 3;
 
 
     public static void runTopNOperator() throws Exception{
@@ -34,7 +34,7 @@ public class TopNStreamProcess {
                 .trigger(new EntityTrigger(30))//clean up the window data
                 //.trigger(CountTrigger.of(3))
                 //.trigger(ContinuousEventTimeTrigger.of(Time.seconds(1)))
-                .process(new EntityProcessFunction(topSize));
+                .process(new EntityProcessFunction(topN));
 
         dataStream.print();
         // TODO Sink

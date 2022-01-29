@@ -1,21 +1,20 @@
 package com.comptechschool.populartopicstracking.topnoperator.sort;
 
-
-import com.comptechschool.populartopicstracking.entity.InputEntity;
+import com.comptechschool.populartopicstracking.topnoperator.topn.AdvanceInputEntity;
 
 import java.util.Arrays;
 import java.util.Comparator;
 
 /**
- * Sort algorithm
+ * Default HeapSort algorithm
  */
 public class EntityHeapSortUtils {
 
-    public static InputEntity[] topN(InputEntity[] arr, int topSize, Comparator<InputEntity> comparator) {
+    public static AdvanceInputEntity[] formTopN(AdvanceInputEntity[] arr, int topN, Comparator<AdvanceInputEntity> comparator) {
         if (arr == null || arr.length == 0) {
             return null;
         }
-        if (topSize >= arr.length) {
+        if (topN >= arr.length) {
             Arrays.sort(arr, comparator);
             return arr;
         }
@@ -28,21 +27,21 @@ public class EntityHeapSortUtils {
             swap(arr, lastIndex, 0);
             lastIndex--;
             constructHeap(arr, 0, lastIndex, comparator);
-            if (lastIndex == arr.length - topSize - 1) {
+            if (lastIndex == arr.length - topN - 1) {
                 break;
             }
         }
         //return arr;
-        InputEntity[] res = new InputEntity[topSize];
-        //System.arraycopy(arr, 1, res, 0, topSize);
+        AdvanceInputEntity[] res = new AdvanceInputEntity[topN];
+        //System.arraycopy(arr, 1, res, 0, topN);
         int idx = arr.length - 1;
-        for (int i = 0; i < topSize; i++) {
+        for (int i = 0; i < topN; i++) {
             res[i] = arr[idx - i];
         }
         return res;
     }
 
-    public static InputEntity[] sort(InputEntity[] arr, Comparator<InputEntity> comparator) {
+    public static AdvanceInputEntity[] sort(AdvanceInputEntity[] arr, Comparator<AdvanceInputEntity> comparator) {
         if (arr == null || arr.length == 0) {
             return null;
         }
@@ -61,7 +60,7 @@ public class EntityHeapSortUtils {
         return arr;
     }
 
-    private static void constructHeap(InputEntity[] arr, int i, int lastIndex, Comparator<InputEntity> comparator) {
+    private static void constructHeap(AdvanceInputEntity[] arr, int i, int lastIndex, Comparator<AdvanceInputEntity> comparator) {
         if (lastIndex <= 0) {
             return;
         }
@@ -90,8 +89,8 @@ public class EntityHeapSortUtils {
         }
     }
 
-    private static void swap(InputEntity[] arr, int left, int top) {
-        InputEntity temp = arr[top];
+    private static void swap(AdvanceInputEntity[] arr, int left, int top) {
+        AdvanceInputEntity temp = arr[top];
         arr[top] = arr[left];
         arr[left] = temp;
     }
