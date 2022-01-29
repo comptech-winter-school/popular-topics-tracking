@@ -21,7 +21,8 @@ public class TopNStreamProcess {
 
     private static int topSize = 3;
 
-    public static void runTopNOperator() throws Exception {
+
+    public static void runTopNOperator() throws Exception{
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         initProperties(env);
         DataStreamSource<InputEntity> source = env.addSource(new DataSource());
