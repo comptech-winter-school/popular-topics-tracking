@@ -8,9 +8,10 @@ import java.util.Random;
 public class DataSource extends RichSourceFunction<InputEntity> {
 
     private boolean isCancelled = false;
-    private final Random id = new Random();
+    private final Random random = new Random();
     private Long maxValue;
     private int delayMillis;
+    private final String[] actionTypes = new String[] {"like", "video", "product"};
 
     public DataSource() {
         maxValue = Long.MAX_VALUE;
@@ -33,7 +34,11 @@ public class DataSource extends RichSourceFunction<InputEntity> {
     @Override
     public void run(SourceContext<InputEntity> sourceContext) throws Exception {
         while (!isCancelled) {
-            InputEntity inputEntity = new InputEntity(Math.abs(id.nextLong() % maxValue), System.currentTimeMillis());
+            InputEntity inputEntity = new InputEntity(
+                    Math.abs(random.nextLong() % maxValue),
+                    System.currentTimeMillis(),
+                    actionTypes[random.nextInt(actionTypes.length)]
+            );
             sourceContext.collectWithTimestamp(inputEntity, inputEntity.getTimestamp());
             Thread.sleep(delayMillis);
         }
