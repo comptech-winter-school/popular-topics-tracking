@@ -21,19 +21,16 @@ public class TopNStreamProcess {
 
     private static int topN = 3;
 
-
     public static void runTopNOperator() throws Exception{
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         initProperties(env);
-        DataStreamSource<InputEntity> source = env.addSource(new DataSource());
+        DataStreamSource<InputEntity> source = env.addSource(new DataSource(10000L));
         SingleOutputStreamOperator<List<InputEntity>> dataStream = source
                 .assignTimestampsAndWatermarks(new EntityAssignerWaterMarks(Time.seconds(5))) //FIXME Replace with current implementation
                 //.windowAll(TumblingEventTimeWindows.of(Time.days(1), Time.hours(16)))
-                .windowAll(TumblingEventTimeWindows.of(Time.seconds(10))) //TODO needs time adjustment
-                .allowedLateness(Time.seconds(5))
-                .trigger(new EntityTrigger(30))//clean up the window data
-                //.trigger(CountTrigger.of(3))
-                //.trigger(ContinuousEventTimeTrigger.of(Time.seconds(1)))
+                .windowAll(TumblingEventTimeWindows.of(Time.seconds(30))) //TODO needs time adjustment
+                .allowedLateness(Time.seconds(20))
+                .trigger(new EntityTrigger(50000))//clean up the window data
                 .process(new EntityProcessFunction(topN));
 
         dataStream.print();
@@ -45,8 +42,6 @@ public class TopNStreamProcess {
     private static void initProperties(StreamExecutionEnvironment env) {
         //Global parallelism
         env.setParallelism(1);
-        //new FsStateBackend("hdfs://home/flink/checkpoints")
-        //env.setStateBackend(new MemoryStateBackend());
 
         //checkpoint per minute
         env.enableCheckpointing(1000 * 60 * 10);

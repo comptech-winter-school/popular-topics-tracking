@@ -2,8 +2,8 @@ package com.comptechschool.populartopicstracking.operator.topn;
 
 
 import com.comptechschool.populartopicstracking.entity.InputEntity;
+import com.comptechschool.populartopicstracking.operator.sort.CountMinSketch;
 import com.comptechschool.populartopicstracking.operator.sort.EntityHeapSortUtils;
-
 import org.apache.flink.api.common.state.MapState;
 import org.apache.flink.api.common.state.MapStateDescriptor;
 import org.apache.flink.configuration.Configuration;
@@ -11,15 +11,14 @@ import org.apache.flink.streaming.api.functions.windowing.ProcessAllWindowFuncti
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.util.Collector;
 
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
 public class EntityProcessFunction extends ProcessAllWindowFunction<InputEntity, List<InputEntity>, TimeWindow> {
-    MapStateDescriptor<Long, AdvanceInputEntity> descriptorOfAllMap = new MapStateDescriptor<Long, AdvanceInputEntity>("id_event_all_map", Long.class, AdvanceInputEntity.class);
-    MapState<Long, AdvanceInputEntity> allMap = null; //Key - id , Value - event frequency and InputEntity
+    MapStateDescriptor<Long, AdvanceInputEntity> descriptorOfAllMap = new MapStateDescriptor<Long, AdvanceInputEntity>("id_freq_all_map", Long.class, AdvanceInputEntity.class);
+    MapState<Long, AdvanceInputEntity> allMap = null;
     private final int topN;
 
     public EntityProcessFunction(int topN) {
@@ -35,39 +34,35 @@ public class EntityProcessFunction extends ProcessAllWindowFunction<InputEntity,
     @Override
     public void process(Context context, Iterable<InputEntity> iterable, Collector<List<InputEntity>> collector) throws Exception {
         Iterator<InputEntity> it = iterable.iterator();
-        int temp = 0;
+        long temp = 0;
+        ArrayList<InputEntity> list = new ArrayList<>();
         while (it.hasNext()) {
             temp++;
             InputEntity inputEntity = it.next();
+            list.add(inputEntity);
 
             Long id = inputEntity.getId();
             if (allMap.contains(id)) {
                 AdvanceInputEntity advanceInput = allMap.get(id);
-                advanceInput.setEventFrequency(advanceInput.getEventFrequency()+1);
+                advanceInput.setEventFrequency(advanceInput.getEventFrequency() + 1);
                 allMap.put(id, advanceInput);
             } else {
-                allMap.put(1L , new AdvanceInputEntity(id , inputEntity));
+                allMap.put(id, new AdvanceInputEntity(1L, inputEntity));
             }
         }
 
         System.out.println("==Each process:" + temp);
 
-        ArrayList<AdvanceInputEntity> list = new ArrayList<>();
-        for (AdvanceInputEntity advanceInputEntity : allMap.values()) {
-            list.add(advanceInputEntity);
-        }
-        AdvanceInputEntity[] entitiesArray = new AdvanceInputEntity[list.size()];
-        list.toArray(entitiesArray);
-        AdvanceInputEntity[] inputEntities = EntityHeapSortUtils.formTopN(entitiesArray, topN, Comparator.comparing(AdvanceInputEntity::getEventFrequency).reversed());
-
+        AdvanceInputEntity[] inputEntities = EntityHeapSortUtils.
+                formTopN(CountMinSketch.getFrequencyArray(1, list.size(), list), topN, Comparator
+                        .comparing(AdvanceInputEntity::getEventFrequency));
 
         List<InputEntity> res = new ArrayList<>();
-
-        //Guaranteed sort order
         for (int i = 0; i < inputEntities.length; i++) {
             res.add(inputEntities[i].getInputEntity());
         }
 
+        //FIXME change res
         collector.collect(res);
     }
 

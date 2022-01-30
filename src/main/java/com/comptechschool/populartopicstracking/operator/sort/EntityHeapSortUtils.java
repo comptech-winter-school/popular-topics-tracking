@@ -5,9 +5,7 @@ import com.comptechschool.populartopicstracking.operator.topn.AdvanceInputEntity
 import java.util.Arrays;
 import java.util.Comparator;
 
-/**
- * Default HeapSort algorithm
- */
+
 public class EntityHeapSortUtils {
 
     public static AdvanceInputEntity[] formTopN(AdvanceInputEntity[] arr, int topN, Comparator<AdvanceInputEntity> comparator) {
