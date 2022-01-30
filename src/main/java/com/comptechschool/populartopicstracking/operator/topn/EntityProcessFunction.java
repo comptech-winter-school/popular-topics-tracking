@@ -2,8 +2,8 @@ package com.comptechschool.populartopicstracking.operator.topn;
 
 
 import com.comptechschool.populartopicstracking.entity.InputEntity;
-import com.comptechschool.populartopicstracking.operator.sort.CountMinSketch;
-import com.comptechschool.populartopicstracking.operator.sort.EntityHeapSortUtils;
+import com.comptechschool.populartopicstracking.operator.topn.sort.CountMinSketch;
+import com.comptechschool.populartopicstracking.operator.topn.sort.EntityHeapSortUtils;
 import org.apache.flink.api.common.state.MapState;
 import org.apache.flink.api.common.state.MapStateDescriptor;
 import org.apache.flink.configuration.Configuration;

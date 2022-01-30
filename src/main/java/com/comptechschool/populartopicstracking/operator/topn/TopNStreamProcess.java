@@ -2,6 +2,7 @@ package com.comptechschool.populartopicstracking.operator.topn;
 
 import com.comptechschool.populartopicstracking.DataSource;
 import com.comptechschool.populartopicstracking.entity.InputEntity;
+import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.restartstrategy.RestartStrategies;
 import org.apache.flink.streaming.api.CheckpointingMode;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
@@ -11,6 +12,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
 
+import java.time.Duration;
 import java.util.List;
 
 
@@ -21,14 +23,14 @@ public class TopNStreamProcess {
 
     private static int topN = 3;
 
-    public static void runTopNOperator() throws Exception{
+    public void runTopNOperator() throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         initProperties(env);
         DataStreamSource<InputEntity> source = env.addSource(new DataSource(10000L));
         SingleOutputStreamOperator<List<InputEntity>> dataStream = source
-                .assignTimestampsAndWatermarks(new EntityAssignerWaterMarks(Time.seconds(5))) //FIXME Replace with current implementation
-                //.windowAll(TumblingEventTimeWindows.of(Time.days(1), Time.hours(16)))
-                .windowAll(TumblingEventTimeWindows.of(Time.seconds(30))) //TODO needs time adjustment
+                //.assignTimestampsAndWatermarks(new EntityAssignerWaterMarks(Time.seconds(5)))
+                .assignTimestampsAndWatermarks(WatermarkStrategy.forBoundedOutOfOrderness(Duration.ofSeconds(20)))
+                .windowAll(TumblingEventTimeWindows.of(Time.seconds(30)))
                 .allowedLateness(Time.seconds(20))
                 .trigger(new EntityTrigger(50000))//clean up the window data
                 .process(new EntityProcessFunction(topN));
@@ -39,7 +41,7 @@ public class TopNStreamProcess {
     }
 
 
-    private static void initProperties(StreamExecutionEnvironment env) {
+    private void initProperties(StreamExecutionEnvironment env) {
         //Global parallelism
         env.setParallelism(1);
 
@@ -53,8 +55,8 @@ public class TopNStreamProcess {
         //Set the maximum parallelism of checkpoints
         env.getCheckpointConfig().setMaxConcurrentCheckpoints(1);
         //Do not delete the save point data even if you manually cancel the task
-        env.getCheckpointConfig().enableExternalizedCheckpoints(CheckpointConfig.
-                ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION); //FIXME Replace with current implementation
+        env.getCheckpointConfig().setExternalizedCheckpointCleanup(CheckpointConfig.
+                ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION);
 
 
     }

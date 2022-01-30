@@ -1,4 +1,4 @@
-package com.comptechschool.populartopicstracking.operator.sort;
+package com.comptechschool.populartopicstracking.operator.topn.sort;
 
 import com.comptechschool.populartopicstracking.operator.topn.AdvanceInputEntity;
 

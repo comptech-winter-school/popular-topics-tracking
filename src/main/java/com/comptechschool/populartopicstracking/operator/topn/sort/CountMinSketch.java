@@ -1,4 +1,4 @@
-package com.comptechschool.populartopicstracking.operator.sort;
+package com.comptechschool.populartopicstracking.operator.topn.sort;
 
 import com.comptechschool.populartopicstracking.entity.InputEntity;
 import com.comptechschool.populartopicstracking.operator.topn.AdvanceInputEntity;
@@ -119,7 +119,6 @@ public class CountMinSketch<T> {
             cms.update(entityList.get(i).getId(), increment);
         }
 
-        //Print out all the numbers that were added with their real and estimated count.
         int count = 0;
         AdvanceInputEntity[] entitiesArray = new AdvanceInputEntity[freqCount.size()];
         for (Long key : freqCount.keySet()) {
