@@ -1,4 +1,4 @@
-package com.comptechschool.populartopicstracking.topnoperator.topn;
+package com.comptechschool.populartopicstracking.operator.topn;
 
 import com.comptechschool.populartopicstracking.entity.InputEntity;
 import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor;
