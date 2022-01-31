@@ -1,12 +1,9 @@
 package com.comptechschool.populartopicstracking;
 
-import com.comptechschool.populartopicstracking.entity.InputEntity;
-import com.comptechschool.populartopicstracking.operator.InputEntityFilter;
-import com.comptechschool.populartopicstracking.operator.topn.EntityProcessFunction;
 import com.comptechschool.populartopicstracking.operator.topn.EntityTrigger;
+import com.comptechschool.populartopicstracking.operator.topn.processimpl.EntityProcessFunction;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.restartstrategy.RestartStrategies;
-import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.streaming.api.CheckpointingMode;
 import org.apache.flink.streaming.api.environment.CheckpointConfig;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
