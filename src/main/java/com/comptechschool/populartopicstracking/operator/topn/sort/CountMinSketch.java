@@ -44,12 +44,39 @@ public class CountMinSketch<T> {
         return hashCode % width;
     }
 
-    //I'm sorry...it looks terrible, but it's the best I could make
+    public static int firstHashFunc(long number) {
+        int hash = (String.valueOf(number).hashCode());
+        return hash;
+    }
+
+    public static int secondHashFunc(long number, int i) {
+        int hash = (String.valueOf(number).hashCode() * i);
+        return hash;
+    }
+
+    public static int getRandomNumber() {
+        return (int) (Math.random() * 32) + 19;
+    }
+
     //FIXME Fix data type and change hash function
     public static AdvanceInputEntity[] getFrequencyArray(long maxIncrement, long iterations, List<InputEntity> entityList) {
+
+        /*
+        CountMinSketch.Hasher<Long> hasher1 = number1 -> firstHashFunc(number1) + secondHashFunc(number1, 1);
+        CountMinSketch.Hasher<Long> hasher2 = number2 -> firstHashFunc(number2) + secondHashFunc(number2, 2);
+        CountMinSketch.Hasher<Long> hasher3 = number3 -> firstHashFunc(number3) + secondHashFunc(number3, 3);
+        CountMinSketch.Hasher<Long> hasher4 = number4 -> firstHashFunc(number4) + secondHashFunc(number4, 4);
+        CountMinSketch.Hasher<Long> hasher5 = number5 -> firstHashFunc(number5) + secondHashFunc(number5, 5);
+        CountMinSketch.Hasher<Long> hasher6 = number6 -> firstHashFunc(number6) + secondHashFunc(number6, 6);
+        CountMinSketch.Hasher<Long> hasher7 = number7 -> firstHashFunc(number7) + secondHashFunc(number7, 7);
+        CountMinSketch.Hasher<Long> hasher8 = number8 -> firstHashFunc(number8) + secondHashFunc(number8, 8);
+        CountMinSketch.Hasher<Long> hasher9 = number9 -> firstHashFunc(number9) + secondHashFunc(number9, 9);
+        CountMinSketch.Hasher<Long> hasher10 = number10 -> firstHashFunc(number10) + secondHashFunc(number10, 10);
+        */
+
         CountMinSketch.Hasher<Long> hasher1 = Math::toIntExact;
         CountMinSketch.Hasher<Long> hasher4 = number4 -> String.valueOf(number4).hashCode();
-        CountMinSketch.Hasher<Long> hasher2 = number3 -> String.valueOf(number3).hashCode();
+        CountMinSketch.Hasher<Long> hasher2 = number2 -> String.valueOf(number2).hashCode();
         CountMinSketch.Hasher<Long> hasher3 = number3 -> String.valueOf(number3).hashCode();
         CountMinSketch.Hasher<Long> hasher5 = number5 -> String.valueOf(number5).hashCode();
         CountMinSketch.Hasher<Long> hasher6 = number6 -> String.valueOf(number6).hashCode();
@@ -57,54 +84,6 @@ public class CountMinSketch<T> {
         CountMinSketch.Hasher<Long> hasher8 = number8 -> String.valueOf(number8).hashCode();
         CountMinSketch.Hasher<Long> hasher9 = number9 -> String.valueOf(number9).hashCode();
         CountMinSketch.Hasher<Long> hasher10 = number10 -> String.valueOf(number10).hashCode();
-
-        //10 independent hash functions are needed here. This is the second implementation option,
-        // but I think you can make a separate method for this
-
-/*        CountMinSketch.Hasher<Long> hasher5 = number -> (int) (number * 12);
-        CountMinSketch.Hasher<Long> hasher8 = number -> (int) (number * 17);
-        CountMinSketch.Hasher<Long> hasher3 = number -> {
-            number ^= (number << 13);
-            number ^= (number >> 17);
-            number ^= (number << 5);
-            return (int) Math.abs(number);
-        };
-        CountMinSketch.Hasher<Long> hasher7 = number -> {
-            number ^= (number << 1);
-            number ^= (number >> 8);
-            number ^= (number << 12);
-            return (int) Math.abs(number);
-        };
-        CountMinSketch.Hasher<Long> hasher10 = number -> {
-            number ^= (number << 7);
-            number ^= (number >> 4);
-            number ^= (number << 11);
-            return (int) Math.abs(number);
-        };
-        CountMinSketch.Hasher<Long> hasher2 = number -> {
-            String strForm = String.valueOf(number);
-            int hashVal = 0;
-            for (int i = 0; i < strForm.length(); i++) {
-                hashVal = strForm.charAt(i) + (31 * hashVal);
-            }
-            return hashVal;
-        };
-        CountMinSketch.Hasher<Long> hasher6 = number -> {
-            String strForm = String.valueOf(number);
-            int hashVal = 0;
-            for (int i = 0; i < strForm.length(); i++) {
-                hashVal = strForm.charAt(i) + (14 * hashVal);
-            }
-            return hashVal;
-        };
-        CountMinSketch.Hasher<Long> hasher9 = number -> {
-            String test = String.valueOf(number);
-            int hashVal = 0;
-            for (int i = 0; i < test.length(); i++) {
-                hashVal = test.charAt(i) + (3 * hashVal);
-            }
-            return hashVal;
-        };*/
 
         int numberOfBuckets = 20000;
         CountMinSketch<Long> cms = new CountMinSketch<>(numberOfBuckets, hasher1, hasher2, hasher3,
