@@ -13,13 +13,14 @@ import scala.Tuple3;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 
 public class EntityProcessFunction extends AbstractProcess {
-    MapStateDescriptor<Long, AdvanceInputEntity> descriptorOfAllMap = new MapStateDescriptor<Long, AdvanceInputEntity>("id_freq_all_map", Long.class, AdvanceInputEntity.class);
+
+    MapStateDescriptor<Long, AdvanceInputEntity> descriptorOfAllMap =
+            new MapStateDescriptor<Long, AdvanceInputEntity>("id_freq_all_map", Long.class, AdvanceInputEntity.class);
+
     MapState<Long, AdvanceInputEntity> allMap = null;
-    List<Tuple3<Long, Long, String>> tuples;
     private final int topN;
 
     public EntityProcessFunction(int topN) {
@@ -27,42 +28,41 @@ public class EntityProcessFunction extends AbstractProcess {
         this.topN = topN;
     }
 
-/*    public EntityProcessFunction(Tuple3<Long, Long, String> tuple, int topN) {
-        super();
-        this.topN = topN;
-        this.tuple = tuple;
-    }*/
-
     @Override
     public void open(Configuration parameters) {
         allMap = getRuntimeContext().getMapState(descriptorOfAllMap);
     }
 
+    /**
+     * Computational complexity of mathematical operations and algorithms (Heap Sort and Count min sketch):
+     *   Algorithm |    Memory    |    Time     |
+     *   ----------------------------------------
+     *   HeapSort  |     O(1)     |  O(nLog(n)) |
+     *   Sketch    |     O(1)     |  O(nLog(n)) |
+     */
+
     @Override
     public void process(Context context, Iterable<InputEntity> iterable, Collector<List<Tuple3<Long, Long, String>>> collector) {
-        Iterator<InputEntity> it = iterable.iterator();
-        long temp = 0;
+        List<Tuple3<Long, Long, String>> tuples = new ArrayList<>();
         ArrayList<InputEntity> list = new ArrayList<>();
-        while (it.hasNext()) {
-            temp++;
-            InputEntity inputEntity = it.next();
-            list.add(inputEntity);
 
-            Long id = inputEntity.getId();
+        for (InputEntity entity : iterable) {
+            list.add(entity);
+            Long id = entity.getId();
             try {
                 if (allMap.contains(id)) {
                     AdvanceInputEntity advanceInput = allMap.get(id);
                     advanceInput.setEventFrequency(advanceInput.getEventFrequency() + 1);
                     allMap.put(id, advanceInput);
                 } else {
-                    allMap.put(id, new AdvanceInputEntity(1L, inputEntity));
+                    allMap.put(id, new AdvanceInputEntity(1L, entity));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        System.out.println("==Each process:" + temp);
+        System.out.println("\n" + "=====Result separator=====" + "\n");
 
         AdvanceInputEntity[] inputEntities = EntityHeapSortUtils.
                 formTopN(CountMinSketch.
@@ -74,7 +74,6 @@ public class EntityProcessFunction extends AbstractProcess {
             res.add(inputEntities[i].getInputEntity());
         }
 
-        //FIXME change res
         collector.collect(tuples);
     }
 

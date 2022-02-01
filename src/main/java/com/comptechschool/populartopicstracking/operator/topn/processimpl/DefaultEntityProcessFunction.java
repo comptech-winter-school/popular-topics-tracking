@@ -12,6 +12,7 @@ import scala.Tuple3;
 import java.util.*;
 
 public class DefaultEntityProcessFunction extends AbstractProcess {
+
     MapStateDescriptor<Long, AdvanceInputEntity> descriptorOfAllMap = new MapStateDescriptor<Long, AdvanceInputEntity>("id_freq_all_map", Long.class, AdvanceInputEntity.class);
     MapState<Long, AdvanceInputEntity> allMap = null;
 
@@ -28,7 +29,7 @@ public class DefaultEntityProcessFunction extends AbstractProcess {
     }
 
     @Override
-    public void process(Context context, Iterable<InputEntity> iterable, Collector<List<Tuple3<Long, Long, String>>> collector) {
+    public void process(Context context, Iterable<InputEntity> iterable, Collector<List<Tuple3<Long, Long, String>>> collector) throws Exception {
         Iterator<InputEntity> it = iterable.iterator();
         Map<Long, AdvanceInputEntity> idToEntityMap = new HashMap();
         List<InputEntity> inputEntities = new ArrayList<>();
@@ -50,6 +51,7 @@ public class DefaultEntityProcessFunction extends AbstractProcess {
                 e.printStackTrace();
             }
         }
+        allMap.putAll(idToEntityMap);
 
         List<AdvanceInputEntity> mapValues = new ArrayList<>(idToEntityMap.values());
         Collections.sort(mapValues, Collections.reverseOrder());
