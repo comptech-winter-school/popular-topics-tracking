@@ -1,4 +1,4 @@
-package com.comptechschool.populartopicstracking;
+package com.comptechschool.populartopicstracking.source;
 
 import com.comptechschool.populartopicstracking.entity.InputEntity;
 import org.apache.flink.streaming.api.functions.source.RichSourceFunction;

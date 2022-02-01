@@ -1,4 +1,4 @@
-package com.comptechschool.populartopicstracking.operator;
+package com.comptechschool.populartopicstracking.function;
 
 import com.comptechschool.populartopicstracking.entity.InputEntity;
 import org.apache.flink.api.java.functions.KeySelector;

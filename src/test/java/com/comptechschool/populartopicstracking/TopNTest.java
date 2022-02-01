@@ -2,6 +2,7 @@ package com.comptechschool.populartopicstracking;
 
 import com.comptechschool.populartopicstracking.operator.topn.EntityTrigger;
 import com.comptechschool.populartopicstracking.operator.topn.processimpl.EntityProcessFunction;
+import com.comptechschool.populartopicstracking.source.DataSource;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.restartstrategy.RestartStrategies;
 import org.apache.flink.streaming.api.CheckpointingMode;

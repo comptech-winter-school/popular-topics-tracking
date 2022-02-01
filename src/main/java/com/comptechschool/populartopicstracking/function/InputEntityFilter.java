@@ -1,4 +1,4 @@
-package com.comptechschool.populartopicstracking.operator;
+package com.comptechschool.populartopicstracking.function;
 
 import com.comptechschool.populartopicstracking.entity.InputEntity;
 import org.apache.flink.api.common.functions.FilterFunction;
@@ -19,8 +19,8 @@ public class InputEntityFilter implements FilterFunction<InputEntity> {
         Properties properties = new Properties();
         FileInputStream fileInputStream = new FileInputStream(FILE_PATH);
         properties.load(fileInputStream);
-        actionType = properties.getProperty("ACTION_TYPE");
-        logger.debug("Filter action type: {}", properties.getProperty("ACTION_TYPE"));
+        actionType = properties.getProperty("filter.action-type");
+        logger.debug("Filter action type: {}", actionType);
     }
 
     @Override
