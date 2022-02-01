@@ -1,5 +1,6 @@
 package com.comptechschool.populartopicstracking;
 
+import com.comptechschool.populartopicstracking.source.DataSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.sink.PrintSinkFunction;
 import org.junit.Test;
