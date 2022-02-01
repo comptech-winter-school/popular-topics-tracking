@@ -1,7 +1,7 @@
 package com.comptechschool.populartopicstracking.entity;
 
 
-public class AdvanceInputEntity {
+public class AdvanceInputEntity implements Comparable<AdvanceInputEntity> {
 
     private long eventFrequency;
     private InputEntity inputEntity;
@@ -33,5 +33,10 @@ public class AdvanceInputEntity {
                 "eventFrequency=" + eventFrequency +
                 ", inputEntity=" + inputEntity +
                 '}';
+    }
+
+    @Override
+    public int compareTo(AdvanceInputEntity advanceInputEntity) {
+        return (int) (this.getEventFrequency() - advanceInputEntity.getEventFrequency());
     }
 }

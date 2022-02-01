@@ -7,6 +7,7 @@ import java.util.Properties;
 public class ConfigUtils {
     private final static String FILE_PATH = "src/main/resources/config.properties";
     private static final Properties properties = new Properties();
+
     static {
         FileInputStream fileInputStream;
         try {

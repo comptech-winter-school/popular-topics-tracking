@@ -2,7 +2,6 @@ package com.comptechschool.populartopicstracking.operator.topn.processimpl;
 
 import com.comptechschool.populartopicstracking.entity.AdvanceInputEntity;
 import com.comptechschool.populartopicstracking.entity.InputEntity;
-import com.comptechschool.populartopicstracking.operator.topn.processimpl.AbstractProcess;
 import com.comptechschool.populartopicstracking.operator.topn.sort.CountMinSketch;
 import com.comptechschool.populartopicstracking.operator.topn.sort.EntityHeapSortUtils;
 import org.apache.flink.api.common.state.MapState;
@@ -20,7 +19,7 @@ import java.util.List;
 public class EntityProcessFunction extends AbstractProcess {
     MapStateDescriptor<Long, AdvanceInputEntity> descriptorOfAllMap = new MapStateDescriptor<Long, AdvanceInputEntity>("id_freq_all_map", Long.class, AdvanceInputEntity.class);
     MapState<Long, AdvanceInputEntity> allMap = null;
-    List<Tuple3<Long , Long , String>> tuples;
+    List<Tuple3<Long, Long, String>> tuples;
     private final int topN;
 
     public EntityProcessFunction(int topN) {
@@ -40,7 +39,7 @@ public class EntityProcessFunction extends AbstractProcess {
     }
 
     @Override
-    public void process(Context context, Iterable<InputEntity> iterable, Collector< List<Tuple3<Long , Long , String>>> collector) {
+    public void process(Context context, Iterable<InputEntity> iterable, Collector<List<Tuple3<Long, Long, String>>> collector) {
         Iterator<InputEntity> it = iterable.iterator();
         long temp = 0;
         ArrayList<InputEntity> list = new ArrayList<>();
@@ -67,7 +66,7 @@ public class EntityProcessFunction extends AbstractProcess {
 
         AdvanceInputEntity[] inputEntities = EntityHeapSortUtils.
                 formTopN(CountMinSketch.
-                                getFrequencyArray(1 , list.size(), list), topN,
+                                getFrequencyArray(1, list.size(), list), topN,
                         Comparator.comparing(AdvanceInputEntity::getEventFrequency));
 
         List<InputEntity> res = new ArrayList<>();
@@ -80,7 +79,7 @@ public class EntityProcessFunction extends AbstractProcess {
     }
 
     @Override
-    public void clear(ProcessAllWindowFunction.Context context){
+    public void clear(ProcessAllWindowFunction.Context context) {
         allMap.clear();
     }
 }

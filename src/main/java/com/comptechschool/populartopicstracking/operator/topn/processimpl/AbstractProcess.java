@@ -9,11 +9,11 @@ import scala.Tuple3;
 
 import java.util.List;
 
-public abstract class AbstractProcess extends ProcessAllWindowFunction<InputEntity, List<Tuple3<Long , Long , String>>, TimeWindow> {
+public abstract class AbstractProcess extends ProcessAllWindowFunction<InputEntity, List<Tuple3<Long, Long, String>>, TimeWindow> {
 
     @Override
     public abstract void process(ProcessAllWindowFunction<InputEntity, List<Tuple3<Long, Long, String>>, TimeWindow>.Context context,
-                                 Iterable<InputEntity> elements, Collector< List<Tuple3<Long , Long , String>>> out) throws Exception;
+                                 Iterable<InputEntity> elements, Collector<List<Tuple3<Long, Long, String>>> out) throws Exception;
 
     @Override
     public abstract void open(Configuration parameters) throws Exception;
