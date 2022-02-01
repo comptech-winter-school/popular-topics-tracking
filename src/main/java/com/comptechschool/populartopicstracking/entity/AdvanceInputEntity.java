@@ -1,7 +1,5 @@
-package com.comptechschool.populartopicstracking.operator.topn;
+package com.comptechschool.populartopicstracking.entity;
 
-
-import com.comptechschool.populartopicstracking.entity.InputEntity;
 
 public class AdvanceInputEntity {
 

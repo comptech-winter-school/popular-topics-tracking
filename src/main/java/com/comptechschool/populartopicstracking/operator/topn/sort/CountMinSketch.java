@@ -1,7 +1,7 @@
 package com.comptechschool.populartopicstracking.operator.topn.sort;
 
+import com.comptechschool.populartopicstracking.entity.AdvanceInputEntity;
 import com.comptechschool.populartopicstracking.entity.InputEntity;
-import com.comptechschool.populartopicstracking.operator.topn.AdvanceInputEntity;
 
 import java.util.HashMap;
 import java.util.List;
@@ -9,8 +9,8 @@ import java.util.Random;
 
 public class CountMinSketch<T> {
 
-    public static interface Hasher<T> {
-        public int hash(T obj);
+    public interface Hasher<T> {
+        int hash(T obj);
     }
 
     private final int depth;
