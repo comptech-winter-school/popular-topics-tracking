@@ -11,7 +11,7 @@ public class DataSource extends RichSourceFunction<InputEntity> {
     private final Random random = new Random();
     private Long maxValue;
     private int delayMillis;
-    private final String[] actionTypes = new String[] {"like", "video", "product"};
+    private final String[] actionTypes = new String[]{"like", "video", "product"};
 
     public DataSource() {
         maxValue = Long.MAX_VALUE;

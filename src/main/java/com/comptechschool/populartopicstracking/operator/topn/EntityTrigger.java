@@ -9,7 +9,7 @@ import org.apache.flink.streaming.api.windowing.triggers.TriggerResult;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 
 public class EntityTrigger extends Trigger<InputEntity, TimeWindow> {
-    private Integer size;
+    private final Integer size;
 
     public EntityTrigger(Integer size) {
         super();

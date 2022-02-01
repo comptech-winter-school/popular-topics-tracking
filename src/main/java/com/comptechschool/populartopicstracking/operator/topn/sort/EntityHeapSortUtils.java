@@ -1,6 +1,6 @@
 package com.comptechschool.populartopicstracking.operator.topn.sort;
 
-import com.comptechschool.populartopicstracking.operator.topn.AdvanceInputEntity;
+import com.comptechschool.populartopicstracking.entity.AdvanceInputEntity;
 
 import java.util.Arrays;
 import java.util.Comparator;

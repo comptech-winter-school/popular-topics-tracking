@@ -1,25 +1,26 @@
 package com.comptechschool.populartopicstracking.operator.topn.processimpl;
 
-
+import com.comptechschool.populartopicstracking.entity.AdvanceInputEntity;
 import com.comptechschool.populartopicstracking.entity.InputEntity;
-import com.comptechschool.populartopicstracking.operator.topn.AdvanceInputEntity;
+import com.comptechschool.populartopicstracking.operator.topn.processimpl.AbstractProcess;
 import com.comptechschool.populartopicstracking.operator.topn.sort.CountMinSketch;
 import com.comptechschool.populartopicstracking.operator.topn.sort.EntityHeapSortUtils;
 import org.apache.flink.api.common.state.MapState;
 import org.apache.flink.api.common.state.MapStateDescriptor;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.functions.windowing.ProcessAllWindowFunction;
-import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.util.Collector;
+import scala.Tuple3;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-public class EntityProcessFunction extends ProcessAllWindowFunction<InputEntity, List<InputEntity>, TimeWindow> {
+public class EntityProcessFunction extends AbstractProcess {
     MapStateDescriptor<Long, AdvanceInputEntity> descriptorOfAllMap = new MapStateDescriptor<Long, AdvanceInputEntity>("id_freq_all_map", Long.class, AdvanceInputEntity.class);
     MapState<Long, AdvanceInputEntity> allMap = null;
+    List<Tuple3<Long , Long , String>> tuples;
     private final int topN;
 
     public EntityProcessFunction(int topN) {
@@ -27,13 +28,19 @@ public class EntityProcessFunction extends ProcessAllWindowFunction<InputEntity,
         this.topN = topN;
     }
 
+/*    public EntityProcessFunction(Tuple3<Long, Long, String> tuple, int topN) {
+        super();
+        this.topN = topN;
+        this.tuple = tuple;
+    }*/
+
     @Override
-    public void open(Configuration parameters) throws Exception {
+    public void open(Configuration parameters) {
         allMap = getRuntimeContext().getMapState(descriptorOfAllMap);
     }
 
     @Override
-    public void process(Context context, Iterable<InputEntity> iterable, Collector<List<InputEntity>> collector) throws Exception {
+    public void process(Context context, Iterable<InputEntity> iterable, Collector< List<Tuple3<Long , Long , String>>> collector) {
         Iterator<InputEntity> it = iterable.iterator();
         long temp = 0;
         ArrayList<InputEntity> list = new ArrayList<>();
@@ -43,20 +50,25 @@ public class EntityProcessFunction extends ProcessAllWindowFunction<InputEntity,
             list.add(inputEntity);
 
             Long id = inputEntity.getId();
-            if (allMap.contains(id)) {
-                AdvanceInputEntity advanceInput = allMap.get(id);
-                advanceInput.setEventFrequency(advanceInput.getEventFrequency() + 1);
-                allMap.put(id, advanceInput);
-            } else {
-                allMap.put(id, new AdvanceInputEntity(1L, inputEntity));
+            try {
+                if (allMap.contains(id)) {
+                    AdvanceInputEntity advanceInput = allMap.get(id);
+                    advanceInput.setEventFrequency(advanceInput.getEventFrequency() + 1);
+                    allMap.put(id, advanceInput);
+                } else {
+                    allMap.put(id, new AdvanceInputEntity(1L, inputEntity));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
         System.out.println("==Each process:" + temp);
 
         AdvanceInputEntity[] inputEntities = EntityHeapSortUtils.
-                formTopN(CountMinSketch.getFrequencyArray(1, list.size(), list), topN, Comparator
-                        .comparing(AdvanceInputEntity::getEventFrequency));
+                formTopN(CountMinSketch.
+                                getFrequencyArray(1 , list.size(), list), topN,
+                        Comparator.comparing(AdvanceInputEntity::getEventFrequency));
 
         List<InputEntity> res = new ArrayList<>();
         for (int i = 0; i < inputEntities.length; i++) {
@@ -64,11 +76,11 @@ public class EntityProcessFunction extends ProcessAllWindowFunction<InputEntity,
         }
 
         //FIXME change res
-        collector.collect(res);
+        collector.collect(tuples);
     }
 
     @Override
-    public void clear(Context context) throws Exception {
+    public void clear(ProcessAllWindowFunction.Context context){
         allMap.clear();
     }
 }
