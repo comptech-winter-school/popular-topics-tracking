@@ -1,10 +1,10 @@
 package com.comptechschool.populartopicstracking;
 
+import com.comptechschool.populartopicstracking.function.ListToTupleFlatMapper;
 import com.comptechschool.populartopicstracking.operator.topn.EntityTrigger;
 import com.comptechschool.populartopicstracking.operator.topn.processimpl.DefaultEntityProcessFunction;
 import com.comptechschool.populartopicstracking.source.DataSource;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
-import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.restartstrategy.RestartStrategies;
 import org.apache.flink.api.common.typeinfo.TypeHint;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
@@ -19,7 +19,6 @@ import org.apache.flink.streaming.connectors.cassandra.CassandraSink;
 import org.junit.Test;
 
 import java.time.Duration;
-import java.util.List;
 
 public class KassandraSInkTest {
 
@@ -37,14 +36,13 @@ public class KassandraSInkTest {
                 .allowedLateness(Time.seconds(20))
                 .trigger(new EntityTrigger(50000))//clean up the window data
                 .process(new DefaultEntityProcessFunction(n))
-                .flatMap((FlatMapFunction<List<Tuple3<Long, Long, String>>, Tuple3<Long, Long, String>>) (tuples, out) -> {
-                    for (Tuple3<Long, Long, String> tuple : tuples) {
-                        out.collect(tuple);
-                    }
-                }).returns(TypeInformation.of(new TypeHint<Tuple3<Long, Long, String>>() {
+                .flatMap(new ListToTupleFlatMapper())
+                .returns(TypeInformation.of(new TypeHint<Tuple3<Long, Long, String>>() {
                 }));
 
         /**/
+
+
 
         CassandraSink.addSink(result)
                 .setQuery("INSERT INTO example.testdb(id, frequency, action) values (?, ?, ?);")
