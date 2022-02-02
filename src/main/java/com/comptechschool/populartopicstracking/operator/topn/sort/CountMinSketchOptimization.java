@@ -1,5 +1,3 @@
-
-
 package com.comptechschool.populartopicstracking.operator.topn.sort;
 
 import com.comptechschool.populartopicstracking.entity.AdvanceInputEntity;
@@ -7,16 +5,17 @@ import com.comptechschool.populartopicstracking.entity.InputEntity;
 
 import java.util.Random;
 
-public class CountMinSketchOptimization<T>  {
+public class CountMinSketchOptimization<T> {
 
     public interface Hasher<T> {
         int hash(T obj);
     }
+
     private final int width = 20000;
     private final int depth = 10;
 
-    private CountMinSketch.Hasher<T>[] hashers;
-    private int[][] frequencyMatrix;
+    private final CountMinSketch.Hasher<T>[] hashers;
+    private final int[][] frequencyMatrix;
 
 
     @SafeVarargs

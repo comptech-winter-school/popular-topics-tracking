@@ -58,9 +58,9 @@ public class EntityProcessFunction extends AbstractProcess {
                 getSortedArray(advanceInputEntities, topN,
                         Comparator.comparing(AdvanceInputEntity::getEventFrequency));
 
-        System.out.println("Top " +topN+ " items in the Stream:"  );
+        System.out.println("Top " + topN + " items in the Stream:");
         for (int i = 0; i < topN; i++) {
-            System.out.println("["+(i+1)+"]" + sortedArray[i]);
+            System.out.println("[" + (i + 1) + "]" + sortedArray[i]);
         }
 
         collector.collect(tuples);

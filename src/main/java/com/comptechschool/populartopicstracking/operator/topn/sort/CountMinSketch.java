@@ -73,7 +73,6 @@ public class CountMinSketch<T> {
         CountMinSketch.Hasher<Long> hasher10 = number10 -> firstHashFunc(number10) + secondHashFunc(number10, 10);*/
 
 
-
         Hasher<Long> hasher1 = Math::toIntExact;
         Hasher<Long> hasher4 = number4 -> String.valueOf(number4).hashCode();
         Hasher<Long> hasher2 = number2 -> String.valueOf(number2).hashCode();
