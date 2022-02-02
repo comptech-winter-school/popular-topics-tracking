@@ -1,11 +1,11 @@
 package com.comptechschool.populartopicstracking.operator.topn.processimpl;
 
 import com.comptechschool.populartopicstracking.entity.InputEntity;
+import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.functions.windowing.ProcessAllWindowFunction;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.util.Collector;
-import scala.Tuple3;
 
 import java.util.List;
 

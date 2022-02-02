@@ -8,7 +8,8 @@ import java.util.Comparator;
 
 public class EntityHeapSortUtils {
 
-    public static AdvanceInputEntity[] formTopN(AdvanceInputEntity[] arr, int topN, Comparator<AdvanceInputEntity> comparator) {
+    public static AdvanceInputEntity[] getSortedArray(AdvanceInputEntity[] arr, int topN, Comparator<AdvanceInputEntity> comparator) {
+
         if (arr == null || arr.length == 0) {
             return null;
         }
@@ -16,6 +17,7 @@ public class EntityHeapSortUtils {
             Arrays.sort(arr, comparator);
             return arr;
         }
+
         int lastIndex = arr.length - 1;
         for (int i = lastIndex / 2 - 1; i >= 0; i--) {
             constructHeap(arr, i, lastIndex, comparator);
@@ -29,9 +31,8 @@ public class EntityHeapSortUtils {
                 break;
             }
         }
-        //return arr;
+        //Тут переводим в tuple3
         AdvanceInputEntity[] res = new AdvanceInputEntity[topN];
-        //System.arraycopy(arr, 1, res, 0, topN);
         int idx = arr.length - 1;
         for (int i = 0; i < topN; i++) {
             res[i] = arr[idx - i];

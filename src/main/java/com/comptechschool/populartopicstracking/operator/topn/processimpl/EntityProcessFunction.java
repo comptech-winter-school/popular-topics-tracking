@@ -3,13 +3,14 @@ package com.comptechschool.populartopicstracking.operator.topn.processimpl;
 import com.comptechschool.populartopicstracking.entity.AdvanceInputEntity;
 import com.comptechschool.populartopicstracking.entity.InputEntity;
 import com.comptechschool.populartopicstracking.operator.topn.sort.CountMinSketch;
+import com.comptechschool.populartopicstracking.operator.topn.sort.CountMinSketchOptimization;
 import com.comptechschool.populartopicstracking.operator.topn.sort.EntityHeapSortUtils;
 import org.apache.flink.api.common.state.MapState;
 import org.apache.flink.api.common.state.MapStateDescriptor;
+import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.functions.windowing.ProcessAllWindowFunction;
 import org.apache.flink.util.Collector;
-import scala.Tuple3;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -35,10 +36,10 @@ public class EntityProcessFunction extends AbstractProcess {
 
     /**
      * Computational complexity of mathematical operations and algorithms (Heap Sort and Count min sketch):
-     *   Algorithm |    Memory    |    Time     |
-     *   ----------------------------------------
-     *   HeapSort  |     O(1)     |  O(nLog(n)) |
-     *   Sketch    |     O(1)     |  O(nLog(n)) |
+     * Algorithm |    Memory    |    Time     |
+     * ----------------------------------------
+     * HeapSort  |     O(1)     |  O(nLog(n)) |
+     * Sketch    |     O(1)     |  O(nLog(n)) |
      */
 
     @Override
@@ -46,27 +47,12 @@ public class EntityProcessFunction extends AbstractProcess {
         List<Tuple3<Long, Long, String>> tuples = new ArrayList<>();
         ArrayList<InputEntity> list = new ArrayList<>();
 
-        for (InputEntity entity : iterable) {
-            list.add(entity);
-            Long id = entity.getId();
-            try {
-                if (allMap.contains(id)) {
-                    AdvanceInputEntity advanceInput = allMap.get(id);
-                    advanceInput.setEventFrequency(advanceInput.getEventFrequency() + 1);
-                    allMap.put(id, advanceInput);
-                } else {
-                    allMap.put(id, new AdvanceInputEntity(1L, entity));
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        new CountMinSketchOptimization<InputEntity>().getFrequencyArray(iterable);
 
         System.out.println("\n" + "=====Result separator=====" + "\n");
 
         AdvanceInputEntity[] inputEntities = EntityHeapSortUtils.
-                formTopN(CountMinSketch.
-                                getFrequencyArray(1, list.size(), list), topN,
+                getSortedArray(CountMinSketch.getFrequencyArray(1, list.size(), list), topN,
                         Comparator.comparing(AdvanceInputEntity::getEventFrequency));
 
         List<InputEntity> res = new ArrayList<>();
