@@ -11,26 +11,33 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.sink.PrintSinkFunction;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
-import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer011;
 import org.junit.Test;
 
 import java.time.Duration;
 
 public class TopNTest {
 
+/*    @Test
+    public void tempTest() {
+        CountMinSketchTemp sketch = new CountMinSketchTemp(0.0001, 0.99999, 1);
+        sketch.add(3, 1);
+        sketch.add(4, 1);
+        System.out.println(sketch.estimateCount(4));
+    }*/
+
     @Test
     public void topNTest() throws Exception {
-        int n = 3;
+        int n = 10;
 
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         initProperties(env);
 
-        env.addSource(new DataSource(10000L))
+        env.addSource(new DataSource(50000L))
                 //.assignTimestampsAndWatermarks(new EntityAssignerWaterMarks(Time.seconds(5)))
                 .assignTimestampsAndWatermarks(WatermarkStrategy.forBoundedOutOfOrderness(Duration.ofSeconds(20)))
                 .windowAll(TumblingEventTimeWindows.of(Time.seconds(30)))
                 .allowedLateness(Time.seconds(20))
-                .trigger(new EntityTrigger(50000))//clean up the window data
+                .trigger(new EntityTrigger(500000))//clean up the window data
                 .process(new EntityProcessFunction(n))
                 .addSink(new PrintSinkFunction<>());
 

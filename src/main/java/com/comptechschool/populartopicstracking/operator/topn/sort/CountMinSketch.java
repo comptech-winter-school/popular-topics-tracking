@@ -61,8 +61,7 @@ public class CountMinSketch<T> {
     //FIXME Fix data type and change hash function
     public static AdvanceInputEntity[] getFrequencyArray(long maxIncrement, long iterations, List<InputEntity> entityList) {
 
-        /*
-        CountMinSketch.Hasher<Long> hasher1 = number1 -> firstHashFunc(number1) + secondHashFunc(number1, 1);
+/*        CountMinSketch.Hasher<Long> hasher1 = number1 -> firstHashFunc(number1) + secondHashFunc(number1, 1);
         CountMinSketch.Hasher<Long> hasher2 = number2 -> firstHashFunc(number2) + secondHashFunc(number2, 2);
         CountMinSketch.Hasher<Long> hasher3 = number3 -> firstHashFunc(number3) + secondHashFunc(number3, 3);
         CountMinSketch.Hasher<Long> hasher4 = number4 -> firstHashFunc(number4) + secondHashFunc(number4, 4);
@@ -71,8 +70,9 @@ public class CountMinSketch<T> {
         CountMinSketch.Hasher<Long> hasher7 = number7 -> firstHashFunc(number7) + secondHashFunc(number7, 7);
         CountMinSketch.Hasher<Long> hasher8 = number8 -> firstHashFunc(number8) + secondHashFunc(number8, 8);
         CountMinSketch.Hasher<Long> hasher9 = number9 -> firstHashFunc(number9) + secondHashFunc(number9, 9);
-        CountMinSketch.Hasher<Long> hasher10 = number10 -> firstHashFunc(number10) + secondHashFunc(number10, 10);
-        */
+        CountMinSketch.Hasher<Long> hasher10 = number10 -> firstHashFunc(number10) + secondHashFunc(number10, 10);*/
+
+
 
         CountMinSketch.Hasher<Long> hasher1 = Math::toIntExact;
         CountMinSketch.Hasher<Long> hasher4 = number4 -> String.valueOf(number4).hashCode();
@@ -101,8 +101,9 @@ public class CountMinSketch<T> {
         int count = 0;
         AdvanceInputEntity[] entitiesArray = new AdvanceInputEntity[freqCount.size()];
         for (Long key : freqCount.keySet()) {
-/*            System.out.println(count + ") " + "For id: " + key + "\t real count: " + freqCount.get(key) + "\t estimated count: "
-                    + cms.estimate(key));*/
+            System.out.println(count + ") " + "For id: " + key + "\t real count: " + freqCount.get(key) + "\t estimated count: "
+                    + cms.estimate(key));
+
             entitiesArray[count] = new AdvanceInputEntity(cms.estimate(key), new InputEntity(key, 0L, ""));
             count++;
         }

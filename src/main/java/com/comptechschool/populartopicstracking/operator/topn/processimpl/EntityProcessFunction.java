@@ -2,7 +2,6 @@ package com.comptechschool.populartopicstracking.operator.topn.processimpl;
 
 import com.comptechschool.populartopicstracking.entity.AdvanceInputEntity;
 import com.comptechschool.populartopicstracking.entity.InputEntity;
-import com.comptechschool.populartopicstracking.operator.topn.sort.CountMinSketch;
 import com.comptechschool.populartopicstracking.operator.topn.sort.CountMinSketchOptimization;
 import com.comptechschool.populartopicstracking.operator.topn.sort.EntityHeapSortUtils;
 import org.apache.flink.api.common.state.MapState;
@@ -45,19 +44,24 @@ public class EntityProcessFunction extends AbstractProcess {
     @Override
     public void process(Context context, Iterable<InputEntity> iterable, Collector<List<Tuple3<Long, Long, String>>> collector) {
         List<Tuple3<Long, Long, String>> tuples = new ArrayList<>();
-        ArrayList<InputEntity> list = new ArrayList<>();
 
-        new CountMinSketchOptimization<InputEntity>().getFrequencyArray(iterable);
-
+        AdvanceInputEntity[] advanceInputEntities = new CountMinSketchOptimization<InputEntity>().getFrequencyArray(iterable);
+        for (int i = 0; i < advanceInputEntities.length; i++) {
+            AdvanceInputEntity advanceInputEntity = advanceInputEntities[i];
+            tuples.add(new Tuple3<>(
+                    advanceInputEntity.getInputEntity().getId(),
+                    advanceInputEntity.getEventFrequency(),
+                    advanceInputEntity.getInputEntity().getActionType()));
+        }
         System.out.println("\n" + "=====Result separator=====" + "\n");
 
-        AdvanceInputEntity[] inputEntities = EntityHeapSortUtils.
-                getSortedArray(CountMinSketch.getFrequencyArray(1, list.size(), list), topN,
+        AdvanceInputEntity[] sortedArray = EntityHeapSortUtils.
+                getSortedArray(advanceInputEntities, topN,
                         Comparator.comparing(AdvanceInputEntity::getEventFrequency));
 
-        List<InputEntity> res = new ArrayList<>();
-        for (int i = 0; i < inputEntities.length; i++) {
-            res.add(inputEntities[i].getInputEntity());
+        System.out.println("Top " +topN+ " items in the Stream:"  );
+        for (int i = 0; i < topN; i++) {
+            System.out.println("["+(i+1)+"]" + sortedArray[i]);
         }
 
         collector.collect(tuples);

@@ -53,7 +53,7 @@ public class KassandraSInkTest {
                 .name("cassandra Sink")
                 .disableChaining();
 
-        env.execute("kafka- kafka_version source, cassandra-4.1.0 sink, tuple3");
+        env.execute("kafka- 3.0 source, cassandra-4.1.0 sink, tuple3");
     }
 
     private void initProperties(StreamExecutionEnvironment env) {

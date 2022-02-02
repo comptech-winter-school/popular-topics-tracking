@@ -39,7 +39,6 @@ public class InputEntity {
     public String toString() {
         return "InputEntity{" +
                 "id=" + id +
-                ", timestamp=" + timestamp +
                 ", actionType='" + actionType + '\'' +
                 '}';
     }
