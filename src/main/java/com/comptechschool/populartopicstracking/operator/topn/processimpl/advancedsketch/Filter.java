@@ -1,6 +1,5 @@
-package com.comptechschool.populartopicstracking.operator.topn.advancedsketch;
+package com.comptechschool.populartopicstracking.operator.topn.processimpl.advancedsketch;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 

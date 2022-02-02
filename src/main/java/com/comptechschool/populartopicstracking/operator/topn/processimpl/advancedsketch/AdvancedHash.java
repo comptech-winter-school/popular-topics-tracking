@@ -1,4 +1,4 @@
-package com.comptechschool.populartopicstracking.operator.topn.advancedsketch;
+package com.comptechschool.populartopicstracking.operator.topn.processimpl.advancedsketch;
 
 public class AdvancedHash {
 
