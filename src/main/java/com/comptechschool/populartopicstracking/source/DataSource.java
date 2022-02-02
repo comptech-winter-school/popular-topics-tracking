@@ -35,7 +35,7 @@ public class DataSource extends RichSourceFunction<InputEntity> {
     public void run(SourceContext<InputEntity> sourceContext) throws Exception {
         while (!isCancelled) {
             InputEntity inputEntity = new InputEntity(
-                    Math.abs(random.nextLong() % maxValue),
+                    Math.abs((long) (random.nextGaussian() * maxValue) % maxValue),
                     System.currentTimeMillis(),
                     actionTypes[random.nextInt(actionTypes.length)]
             );
