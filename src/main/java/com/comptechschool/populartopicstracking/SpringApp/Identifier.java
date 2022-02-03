@@ -1,4 +1,4 @@
-package com.comptechschool.populartopicstracking;
+package com.comptechschool.populartopicstracking.SpringApp;
 
 import com.datastax.driver.mapping.annotations.Table;
 import lombok.AllArgsConstructor;
@@ -16,5 +16,5 @@ public class Identifier implements Serializable {
     @PrimaryKey
     private Long id;
     private Long frequency;
-    private Long action;
+    private String action;
 }
