@@ -15,5 +15,6 @@ import java.io.Serializable;
 public class Identifier implements Serializable {
     @PrimaryKey
     private Long id;
-    private String name;
+    private Long frequency;
+    private Long action;
 }
