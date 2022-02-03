@@ -59,7 +59,7 @@ public class AdvancedEntityProcessFunction extends AbstractProcess {
             long id = inputEntity.getId();
             long freq = sketch.estimateCount(id);
             tuples.add(new Tuple3<>(id, freq, type));
-            inputEntities[count] = new AdvanceInputEntity(id, new InputEntity(id, freq, type));
+            inputEntities[count] = new AdvanceInputEntity(freq, new InputEntity(id, 0L, type));
             count++;
         }
 
