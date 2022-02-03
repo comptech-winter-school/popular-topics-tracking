@@ -4,6 +4,7 @@ import com.comptechschool.populartopicstracking.entity.AdvanceInputEntity;
 import com.comptechschool.populartopicstracking.entity.InputEntity;
 import com.comptechschool.populartopicstracking.operator.topn.sort.CountMinSketchOptimization;
 import com.comptechschool.populartopicstracking.operator.topn.sort.EntityHeapSortUtils;
+import com.comptechschool.populartopicstracking.source.DataSource;
 import org.apache.flink.api.common.state.MapState;
 import org.apache.flink.api.common.state.MapStateDescriptor;
 import org.apache.flink.api.java.tuple.Tuple3;
@@ -14,11 +15,12 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class EntityProcessFunction extends AbstractProcess {
+public class EntityProcessFunction extends AbstractProcess  {
 
     MapStateDescriptor<Long, AdvanceInputEntity> descriptorOfAllMap =
             new MapStateDescriptor<Long, AdvanceInputEntity>("id_freq_all_map", Long.class, AdvanceInputEntity.class);
 
+    DataSource dataSource;
     MapState<Long, AdvanceInputEntity> allMap = null;
     private final int topN;
 
@@ -26,6 +28,14 @@ public class EntityProcessFunction extends AbstractProcess {
         super();
         this.topN = topN;
     }
+
+    public EntityProcessFunction(int topN , DataSource dataSource) {
+        super();
+        this.topN = topN;
+        this.dataSource=dataSource;
+    }
+
+
 
     @Override
     public void open(Configuration parameters) {
@@ -42,6 +52,8 @@ public class EntityProcessFunction extends AbstractProcess {
 
     @Override
     public void process(Context context, Iterable<InputEntity> iterable, Collector<List<Tuple3<Long, Long, String>>> collector) {
+        long start = System.currentTimeMillis();
+
         List<Tuple3<Long, Long, String>> tuples = new ArrayList<>();
 
         AdvanceInputEntity[] advanceInputEntities = new CountMinSketchOptimization<InputEntity>().getFrequencyArray(iterable);
@@ -58,11 +70,14 @@ public class EntityProcessFunction extends AbstractProcess {
                 getSortedArray(advanceInputEntities, topN,
                         Comparator.comparing(AdvanceInputEntity::getEventFrequency));
 
-        System.out.println("Top " + topN + " items in the Stream:");
+/*        System.out.println("Top " + topN + " items in the Stream:");
         for (int i = 0; i < topN; i++) {
             System.out.println("[" + (i + 1) + "]" + sortedArray[i]);
-        }
+        }*/
 
+        long finish = System.currentTimeMillis();
+        long elapsed = finish - start;
+        System.out.println("Top-N with sketch, ms: " + elapsed);
         collector.collect(tuples);
     }
 

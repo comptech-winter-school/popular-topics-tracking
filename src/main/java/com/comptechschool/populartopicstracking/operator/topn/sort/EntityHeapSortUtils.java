@@ -37,6 +37,12 @@ public class EntityHeapSortUtils {
         for (int i = 0; i < topN; i++) {
             res[i] = arr[idx - i];
         }
+        //FIXME
+        System.out.println("Top " + topN + " items in the Stream:");
+        for (int i = 0; i < topN; i++) {
+            System.out.println("[" + (i + 1) + "]" + res[i]);
+        }
+
         return res;
     }
 

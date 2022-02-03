@@ -34,7 +34,6 @@ public class TopNTest {
                 .process(new AdvancedEntityProcessFunction(n))
                 .addSink(new PrintSinkFunction<>());
 
-        // TODO Cassandra Sink
         env.execute("Real-time entity topN");
     }
 
@@ -42,10 +41,11 @@ public class TopNTest {
     public void topNTest() throws Exception {
         int n = 10;
 
+        DataSource dataSource = new DataSource(50000L); //FIXME
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         initProperties(env);
 
-        env.addSource(new DataSource(50000L))
+        env.addSource(dataSource)
                 //.assignTimestampsAndWatermarks(new EntityAssignerWaterMarks(Time.seconds(5)))
                 .assignTimestampsAndWatermarks(WatermarkStrategy.forBoundedOutOfOrderness(Duration.ofSeconds(20)))
                 .windowAll(TumblingEventTimeWindows.of(Time.seconds(30)))
@@ -54,8 +54,8 @@ public class TopNTest {
                 .process(new EntityProcessFunction(n));
         //.addSink(new PrintSinkFunction<>());
 
-        // TODO Cassandra Sink
-        env.execute("Real-time entity topN");
+            env.execute("Real-time entity topN");
+
     }
 
     @Test

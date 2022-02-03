@@ -1,6 +1,7 @@
 package com.comptechschool.populartopicstracking;
 
 import com.comptechschool.populartopicstracking.operator.topn.EntityTrigger;
+import com.comptechschool.populartopicstracking.operator.topn.processimpl.AdvancedEntityProcessFunction;
 import com.comptechschool.populartopicstracking.operator.topn.processimpl.DefaultEntityProcessFunction;
 import com.comptechschool.populartopicstracking.operator.topn.processimpl.EntityProcessFunction;
 import com.comptechschool.populartopicstracking.source.DataSource;
@@ -14,66 +15,60 @@ import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindo
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.junit.Test;
 
-
 import java.time.Duration;
 
 public class TopNTimeTest {
 
-    @Test
-    public void getTimeTestInfo() throws Exception {
-        long start = System.currentTimeMillis();
-        topNTest();
-        //TODO Find a way to stop the stream
-        Thread.sleep(1000);
-        long finish = System.currentTimeMillis();
-        long elapsed = finish - start;
-        System.out.println("Top-N with sketch, ms: " + elapsed);
-    }
+    int n = 10;
 
     @Test
-    public void getTimeDefaultTestInfo() throws Exception {
-        long start = System.currentTimeMillis();
-        defaultTopNTest();
-        //TODO Find a way to stop the stream
-        Thread.sleep(1000);
-        long finish = System.currentTimeMillis();
-        long elapsed = finish - start;
-        System.out.println("Top-N with default impl, ms: " + elapsed);
-    }
-
-
-
     public void topNTest() throws Exception {
-        int n = 3;
 
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         initProperties(env);
 
-        env.addSource(new DataSource(10000L))
+        env.addSource(new DataSource(300000L))
                 .assignTimestampsAndWatermarks(WatermarkStrategy.forBoundedOutOfOrderness(Duration.ofSeconds(20)))
                 .windowAll(TumblingEventTimeWindows.of(Time.seconds(30)))
                 .allowedLateness(Time.seconds(20))
-                .trigger(new EntityTrigger(50000))//clean up the window data
-                .process(new EntityProcessFunction(n))
-                .addSink(new PrintSinkFunction<>());
+                .trigger(new EntityTrigger(500000))//clean up the window data
+                .process(new EntityProcessFunction(n));
 
         env.execute("Real-time entity topN");
     }
 
-    public void defaultTopNTest() throws Exception {
-        int n = 3;
+    @Test
+    public void defaultTopNTest() throws Exception { //200 ms
+
 
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         initProperties(env);
 
-        env.addSource(new DataSource(10000L))
+        env.addSource(new DataSource(50000L))
                 //.assignTimestampsAndWatermarks(new EntityAssignerWaterMarks(Time.seconds(5)))
                 .assignTimestampsAndWatermarks(WatermarkStrategy.forBoundedOutOfOrderness(Duration.ofSeconds(20)))
                 .windowAll(TumblingEventTimeWindows.of(Time.seconds(30)))
                 .allowedLateness(Time.seconds(20))
-                .trigger(new EntityTrigger(50000))//clean up the window data
-                .process(new DefaultEntityProcessFunction(n))
-                .addSink(new PrintSinkFunction<>());
+                .trigger(new EntityTrigger(100000))//clean up the window data
+                .process(new DefaultEntityProcessFunction(n));
+
+        env.execute("Real-time entity topN");
+    }
+
+    @Test
+    public void advancedTopNTest() throws Exception { //250 ms
+
+
+        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        initProperties(env);
+
+        env.addSource(new DataSource(50000L))
+                //.assignTimestampsAndWatermarks(new EntityAssignerWaterMarks(Time.seconds(5)))
+                .assignTimestampsAndWatermarks(WatermarkStrategy.forBoundedOutOfOrderness(Duration.ofSeconds(20)))
+                .windowAll(TumblingEventTimeWindows.of(Time.seconds(30)))
+                .allowedLateness(Time.seconds(20))
+                .trigger(new EntityTrigger(1000000))//clean up the window data
+                .process(new AdvancedEntityProcessFunction(n));
 
         env.execute("Real-time entity topN");
     }
@@ -81,7 +76,7 @@ public class TopNTimeTest {
 
     private void initProperties(StreamExecutionEnvironment env) {
         //Global parallelism
-        env.setParallelism(5);
+        env.setParallelism(1);
 
         //checkpoint per minute
         env.enableCheckpointing(1000 * 60 * 10);

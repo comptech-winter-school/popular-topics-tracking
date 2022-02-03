@@ -10,16 +10,14 @@ import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class AdvancedEntityProcessFunction extends AbstractProcess {
 
-    MapStateDescriptor<Long, AdvanceInputEntity> descriptorOfAllMap =
-            new MapStateDescriptor<Long, AdvanceInputEntity>("id_freq_all_map", Long.class, AdvanceInputEntity.class);
+    MapStateDescriptor<Long, InputEntity> descriptorOfAllMap =
+            new MapStateDescriptor<Long, InputEntity>("id_freq_all_map", Long.class, InputEntity.class);
 
-    MapState<Long, AdvanceInputEntity> allMap = null;
+    MapState<Long, InputEntity> allMap = null;
     private final int topN;
 
     public AdvancedEntityProcessFunction(int topN) {
@@ -33,33 +31,46 @@ public class AdvancedEntityProcessFunction extends AbstractProcess {
     }
 
     @Override
-    public void process(Context context, Iterable<InputEntity> iterable, Collector<List<Tuple3<Long, Long, String>>> collector) {
+    public void process(Context context, Iterable<InputEntity> iterable, Collector<List<Tuple3<Long, Long, String>>> collector) throws Exception {
+
+        long start = System.currentTimeMillis();
         List<Tuple3<Long, Long, String>> tuples = new ArrayList<>();
+        //Map<Long , InputEntity> entityMap = new HashMap<>();
 
-        int size = 0;
-        AdvancedCountMinSketchAlg sketch = new AdvancedCountMinSketchAlg(0.0001, 0.99999, 1);
+        AdvancedCountMinSketchAlg sketch = new AdvancedCountMinSketchAlg(0.0001, 0.999, 1);
+        //String type = iterable.iterator().next().getActionType();
+        String type = "like";
+
+        int size=0;
         for (InputEntity entity : iterable) {
-            sketch.add(entity.getId(), 1);
-            size++;
+            Long id = entity.getId();
+            sketch.add(id, 1);
+            //allMap.put(id, new InputEntity(id, 1L, type));
+            if (!allMap.contains(entity.getId())) {
+                allMap.put(id, new InputEntity(id, 1L, type));
+                size++;
+            }
         }
 
-        AdvanceInputEntity[] advanceInputEntities = new AdvanceInputEntity[size];
-        for (InputEntity entity : iterable) {
-            InputEntity inputEntity = new InputEntity(entity.getId(), entity.getTimestamp(), entity.getActionType());
-            long frequency = sketch.estimateCount(entity.getId());
-            tuples.add(new Tuple3<>(inputEntity.getId(), frequency, inputEntity.getActionType()));
+        AdvanceInputEntity[] inputEntities = new AdvanceInputEntity[size];
+
+        int count = 0;
+        for (InputEntity inputEntity:allMap.values()) {
+            long id = inputEntity.getId();
+            long freq = sketch.estimateCount(id);
+            tuples.add(new Tuple3<>(id, freq, type));
+            inputEntities[count] = new AdvanceInputEntity(id, new InputEntity(id, freq, type));
+            count++;
         }
 
-        AdvanceInputEntity[] sortedArray = EntityHeapSortUtils.
-                getSortedArray(advanceInputEntities, topN,
-                        Comparator.comparing(AdvanceInputEntity::getEventFrequency));
+        EntityHeapSortUtils.getSortedArray(inputEntities, topN, //получение топ н
+                Comparator.comparing(AdvanceInputEntity::getEventFrequency));
 
-        System.out.println("Top " + topN + " items in the Stream:");
-        for (int i = 0; i < topN; i++) {
-            System.out.println("[" + (i + 1) + "]" + sortedArray[i]);
-        }
-
+        long finish = System.currentTimeMillis();
+        long elapsed = finish - start;
+        System.out.println("Top-N with advanced Sketch, ms: " + elapsed);
         collector.collect(tuples);
+
     }
 
     @Override
