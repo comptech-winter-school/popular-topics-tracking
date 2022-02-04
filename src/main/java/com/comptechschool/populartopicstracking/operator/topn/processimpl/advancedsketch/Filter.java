@@ -27,7 +27,6 @@ public abstract class Filter {
 
     public abstract boolean isPresent(String key);
 
-    // for testing
     abstract int emptyBuckets();
 
     @SuppressWarnings("unchecked")

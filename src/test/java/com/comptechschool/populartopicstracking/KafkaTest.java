@@ -16,7 +16,7 @@ public class KafkaTest {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
         env
-                .addSource(new DataSource())
+                .addSource(new DataSource(50000L))
                 .map(new InputEntityToJsonMapper())
                 .sinkTo(KafkaDataSink.createKafkaSink());
 

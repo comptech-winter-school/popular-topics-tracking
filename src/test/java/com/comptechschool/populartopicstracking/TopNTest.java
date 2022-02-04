@@ -1,8 +1,8 @@
 package com.comptechschool.populartopicstracking;
 
+import com.comptechschool.populartopicstracking.function.ListToTupleFlatMapper;
 import com.comptechschool.populartopicstracking.operator.topn.EntityTrigger;
 import com.comptechschool.populartopicstracking.operator.topn.processimpl.AdvancedEntityProcessFunction;
-import com.comptechschool.populartopicstracking.operator.topn.processimpl.EntityProcessFunction;
 import com.comptechschool.populartopicstracking.source.DataSource;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.restartstrategy.RestartStrategies;
@@ -28,35 +28,19 @@ public class TopNTest {
         env.addSource(new DataSource(50000L))
                 //.assignTimestampsAndWatermarks(new EntityAssignerWaterMarks(Time.seconds(5)))
                 .assignTimestampsAndWatermarks(WatermarkStrategy.forBoundedOutOfOrderness(Duration.ofSeconds(20)))
-                .windowAll(TumblingEventTimeWindows.of(Time.seconds(30)))
+                .windowAll(TumblingEventTimeWindows.of(Time.seconds(1)))
                 .allowedLateness(Time.seconds(20))
-                .trigger(new EntityTrigger(500000))//clean up the window data
+                .trigger(new EntityTrigger(500000000))//clean up the window data
                 .process(new AdvancedEntityProcessFunction(n))
+                .flatMap(new ListToTupleFlatMapper())
+                .keyBy(longLongStringTuple3 -> longLongStringTuple3.f2)
+                .sum(1)
                 .addSink(new PrintSinkFunction<>());
 
         env.execute("Real-time entity topN");
     }
 
-    @Test
-    public void topNTest() throws Exception {
-        int n = 10;
 
-        DataSource dataSource = new DataSource(50000L); //FIXME
-        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        initProperties(env);
-
-        env.addSource(dataSource)
-                //.assignTimestampsAndWatermarks(new EntityAssignerWaterMarks(Time.seconds(5)))
-                .assignTimestampsAndWatermarks(WatermarkStrategy.forBoundedOutOfOrderness(Duration.ofSeconds(20)))
-                .windowAll(TumblingEventTimeWindows.of(Time.seconds(30)))
-                .allowedLateness(Time.seconds(20))
-                .trigger(new EntityTrigger(500000))//clean up the window data
-                .process(new EntityProcessFunction(n));
-        //.addSink(new PrintSinkFunction<>());
-
-            env.execute("Real-time entity topN");
-
-    }
 
     @Test
     public void filterKeyByTopNTest() throws Exception {
@@ -66,14 +50,11 @@ public class TopNTest {
         initProperties(env);
 
         env.addSource(new DataSource(10000L))
-                //.filter(new InputEntityFilter())
-                //.keyBy(...)
-                //.assignTimestampsAndWatermarks(new EntityAssignerWaterMarks(Time.seconds(5)))
                 .assignTimestampsAndWatermarks(WatermarkStrategy.forBoundedOutOfOrderness(Duration.ofSeconds(20)))
                 .windowAll(TumblingEventTimeWindows.of(Time.seconds(30)))
                 .allowedLateness(Time.seconds(20))
                 .trigger(new EntityTrigger(50000))//clean up the window data
-                .process(new EntityProcessFunction(n))
+                .process(new AdvancedEntityProcessFunction(n))
                 .addSink(new PrintSinkFunction<>());
 
         // TODO Cassandra Sink
@@ -83,10 +64,8 @@ public class TopNTest {
     private void initProperties(StreamExecutionEnvironment env) {
         //Global parallelism
         env.setParallelism(5);
-
         //checkpoint per minute
         env.enableCheckpointing(1000 * 60 * 10);
-
         env.getCheckpointConfig().setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);
         //Default - EventTime
         //Restart three times after failure, each interval of 20s

@@ -31,16 +31,10 @@ public class EntityHeapSortUtils {
                 break;
             }
         }
-        //Тут переводим в tuple3
         AdvanceInputEntity[] res = new AdvanceInputEntity[topN];
         int idx = arr.length - 1;
         for (int i = 0; i < topN; i++) {
             res[i] = arr[idx - i];
-        }
-        //FIXME
-        System.out.println("Top " + topN + " items in the Stream:");
-        for (int i = 0; i < topN; i++) {
-            System.out.println("[" + (i + 1) + "]" + res[i]);
         }
 
         return res;
