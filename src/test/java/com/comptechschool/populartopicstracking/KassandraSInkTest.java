@@ -48,11 +48,11 @@ public class KassandraSInkTest {
 
         /**/
 
-        result.print();
-        System.out.println(env.getExecutionPlan());
+//        result.print();
+//        System.out.println(env.getExecutionPlan());
 
         CassandraSink.addSink(result)
-                .setQuery("INSERT INTO example.db2(id, frequency, action, timestamp) values (?, ?, ?, ?);")
+                .setQuery("INSERT INTO comptech.topn(id, frequency, action, timestamp) values (?, ?, ?, ?);")
                 .setHost("127.0.0.1")
                 .build()
                 .name("cassandra Sink")
