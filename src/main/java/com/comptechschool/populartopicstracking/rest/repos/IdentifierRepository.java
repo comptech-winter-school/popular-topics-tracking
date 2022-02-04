@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface IdentifierRepository extends CassandraRepository<Identifier, Long> {
 
-    @Query("Select * from testdb where id='id'")
+    @Query("Select * from topn where id='id'")
     List<Identifier> findElementById(Long id);
 
 }

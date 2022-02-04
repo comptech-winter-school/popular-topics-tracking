@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 @Data
 @NoArgsConstructor
-@Table("testdb")  //or db2/db3
+@Table("topn")  //or db2/db3
 public class Identifier implements Serializable, Comparable<Identifier> {
     @PrimaryKey
     private Long id;
