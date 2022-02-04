@@ -34,7 +34,7 @@ public class FlinkRunner implements ApplicationRunner {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         initProperties(env);
 
-        DataStream<Tuple4<Long, Long, String , Long>> result = env
+        DataStream<Tuple4<Long, Long, String, Long>> result = env
                 .fromSource(
                         KafkaDataSource.createKafkaSource(),
                         WatermarkStrategy.forMonotonousTimestamps(),

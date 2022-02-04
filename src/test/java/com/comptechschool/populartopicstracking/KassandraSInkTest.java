@@ -46,7 +46,6 @@ public class KassandraSInkTest {
                 .returns(TypeInformation.of(new TypeHint<Tuple4<Long, Long, String, Long>>() {
                 }));
 
-        /**/
 
 //        result.print();
 //        System.out.println(env.getExecutionPlan());

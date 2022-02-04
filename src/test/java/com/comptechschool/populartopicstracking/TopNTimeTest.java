@@ -21,7 +21,7 @@ public class TopNTimeTest {
 
 
     @Test
-    public void defaultTopNTest() throws Exception { //200 ms
+    public void defaultTopNTest() throws Exception {
 
 
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
@@ -39,14 +39,13 @@ public class TopNTimeTest {
     }
 
     @Test
-    public void advancedTopNTest() throws Exception { //250 ms
+    public void advancedTopNTest() throws Exception {
 
 
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         initProperties(env);
 
         env.addSource(new DataSource(50000L))
-                //.assignTimestampsAndWatermarks(new EntityAssignerWaterMarks(Time.seconds(5)))
                 .assignTimestampsAndWatermarks(WatermarkStrategy.forBoundedOutOfOrderness(Duration.ofSeconds(20)))
                 .windowAll(TumblingEventTimeWindows.of(Time.seconds(30)))
                 .allowedLateness(Time.seconds(20))
@@ -60,10 +59,8 @@ public class TopNTimeTest {
     private void initProperties(StreamExecutionEnvironment env) {
         //Global parallelism
         env.setParallelism(1);
-
         //checkpoint per minute
         env.enableCheckpointing(1000 * 60 * 10);
-
         env.getCheckpointConfig().setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);
         //Default - EventTime
         //Restart three times after failure, each interval of 20s
