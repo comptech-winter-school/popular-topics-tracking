@@ -1,15 +1,15 @@
 package com.comptechschool.populartopicstracking.SpringApp.service;
 
-import com.comptechschool.populartopicstracking.SpringApp.Identifier;
+import com.comptechschool.populartopicstracking.SpringApp.dto.IdentifierDto;
 
 import java.util.List;
 
 public interface IdentifierService {
 
-    List<Identifier> getAllTopNIdentifiers();
+    List<IdentifierDto> getTopNIdentifiers(int n);
 
-    Identifier getIdentifierById(Long id);
+    IdentifierDto getIdentifierById(Long id);
 
-    List<Identifier> getLastAddedIdentifiers(int count);
+    List<IdentifierDto> getAllIdentifiers(int count);
 
 }
