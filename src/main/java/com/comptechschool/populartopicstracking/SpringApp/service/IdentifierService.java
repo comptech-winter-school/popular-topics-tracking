@@ -10,6 +10,6 @@ public interface IdentifierService {
 
     IdentifierDto getIdentifierById(Long id);
 
-    List<IdentifierDto> getAllIdentifiers(int count);
+    List<IdentifierDto> getAllIdentifiers();
 
 }

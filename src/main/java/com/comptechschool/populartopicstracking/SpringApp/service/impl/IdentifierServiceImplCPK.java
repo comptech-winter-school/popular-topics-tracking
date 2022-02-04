@@ -45,7 +45,7 @@ public class IdentifierServiceImplCPK implements IdentifierService {
             }
         }
         List<IdentifierDto> identifierDtos = new ArrayList<>();
-        identifierDtos= (List<IdentifierDto>) identifiersDto.values();
+        identifierDtos = (List<IdentifierDto>) identifiersDto.values();
         log.info("IN getTopNIdentifiers  - top N identifiers: {}", identifierList);
         return identifierDtos;
 
@@ -70,7 +70,7 @@ public class IdentifierServiceImplCPK implements IdentifierService {
 
 
     @Override
-    public List<IdentifierDto> getAllIdentifiers(int count) {
+    public List<IdentifierDto> getAllIdentifiers() {
         Map<Long, IdentifierDto> identifiersDto = new TreeMap<>();
         List<Identifier> identifierList = identifierRepository.findAll();
         for (Identifier identifier : identifierList) {
@@ -86,7 +86,7 @@ public class IdentifierServiceImplCPK implements IdentifierService {
             }
         }
         List<IdentifierDto> identifierDtos = new ArrayList<>();
-        identifierDtos= (List<IdentifierDto>) identifiersDto.values();
+        identifierDtos = (List<IdentifierDto>) identifiersDto.values();
         log.info("IN getAllIdentifiers - {} Identifiers found", identifierList.size());
         return identifierDtos;
     }

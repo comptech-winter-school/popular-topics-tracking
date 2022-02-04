@@ -1,15 +1,18 @@
 package com.comptechschool.populartopicstracking.SpringApp.controller;
 
 
-import com.comptechschool.populartopicstracking.SpringApp.entity.Identifier;
+import com.comptechschool.populartopicstracking.SpringApp.dto.IdentifierDto;
 import com.comptechschool.populartopicstracking.SpringApp.service.IdentifierService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1/identifier")
@@ -18,15 +21,31 @@ public class IdentifierRestController {
     private final IdentifierService identifierService;
 
     @Autowired
-    public IdentifierRestController(IdentifierService identifierService) {
+    public IdentifierRestController(@Qualifier("identifierServiceImplSPK") IdentifierService identifierService) {
         this.identifierService = identifierService;
     }
 
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<Identifier> getIdentifierById(@PathVariable long id) {
+    @GetMapping(value = "/getById/{id}")
+    public ResponseEntity<IdentifierDto> getIdentifierById(@PathVariable long id) {
 
-        identifierService.getIdentifierById(id);
+        IdentifierDto identifier = identifierService.getIdentifierById(id);
 
         return new ResponseEntity<>(identifier, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/getTopN/{N}")
+    public ResponseEntity<List<IdentifierDto>> getTopNIdentifiers(@PathVariable int n) {
+
+        List<IdentifierDto> identifierDtoList = identifierService.getTopNIdentifiers(n);
+
+        return new ResponseEntity<>(identifierDtoList, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/getAll")
+    public ResponseEntity<List<IdentifierDto>> getAllIdentifiers() {
+
+        List<IdentifierDto> identifierDtoList = identifierService.getAllIdentifiers();
+
+        return new ResponseEntity<>(identifierDtoList, HttpStatus.OK);
     }
 }

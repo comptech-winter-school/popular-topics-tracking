@@ -1,6 +1,5 @@
 package com.comptechschool.populartopicstracking.SpringApp.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
@@ -11,7 +10,7 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @Table("testdb")  //or db2/db3
-public class Identifier implements Serializable , Comparable<Identifier>{
+public class Identifier implements Serializable, Comparable<Identifier> {
     @PrimaryKey
     private Long id;
     private String action;
@@ -21,6 +20,6 @@ public class Identifier implements Serializable , Comparable<Identifier>{
 
     @Override
     public int compareTo(Identifier identifier) {
-        return (int) (this.frequency- identifier.frequency);
+        return (int) (this.frequency - identifier.frequency);
     }
 }
