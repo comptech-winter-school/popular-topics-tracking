@@ -1,4 +1,4 @@
-package com.comptechschool.populartopicstracking.SpringApp.entity;
+package com.comptechschool.populartopicstracking.rest.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

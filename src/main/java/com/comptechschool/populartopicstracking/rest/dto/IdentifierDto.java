@@ -1,4 +1,4 @@
-package com.comptechschool.populartopicstracking.SpringApp.dto;
+package com.comptechschool.populartopicstracking.rest.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

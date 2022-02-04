@@ -1,8 +1,8 @@
-package com.comptechschool.populartopicstracking.SpringApp.controller;
+package com.comptechschool.populartopicstracking.rest.controller;
 
 
-import com.comptechschool.populartopicstracking.SpringApp.dto.IdentifierDto;
-import com.comptechschool.populartopicstracking.SpringApp.service.IdentifierService;
+import com.comptechschool.populartopicstracking.rest.dto.IdentifierDto;
+import com.comptechschool.populartopicstracking.rest.service.IdentifierService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;

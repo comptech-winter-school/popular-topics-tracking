@@ -1,9 +1,9 @@
-package com.comptechschool.populartopicstracking.SpringApp.service.impl;
+package com.comptechschool.populartopicstracking.rest.service.impl;
 
-import com.comptechschool.populartopicstracking.SpringApp.dto.IdentifierDto;
-import com.comptechschool.populartopicstracking.SpringApp.entity.Identifier;
-import com.comptechschool.populartopicstracking.SpringApp.repos.IdentifierRepository;
-import com.comptechschool.populartopicstracking.SpringApp.service.IdentifierService;
+import com.comptechschool.populartopicstracking.rest.dto.IdentifierDto;
+import com.comptechschool.populartopicstracking.rest.entity.Identifier;
+import com.comptechschool.populartopicstracking.rest.repos.IdentifierRepository;
+import com.comptechschool.populartopicstracking.rest.service.IdentifierService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

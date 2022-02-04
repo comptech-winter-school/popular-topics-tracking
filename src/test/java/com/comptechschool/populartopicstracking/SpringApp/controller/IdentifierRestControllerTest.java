@@ -1,7 +1,7 @@
 package com.comptechschool.populartopicstracking.SpringApp.controller;
 
-import com.comptechschool.populartopicstracking.SpringApp.dto.IdentifierDto;
-import com.comptechschool.populartopicstracking.SpringApp.service.impl.IdentifierServiceImplSPK;
+import com.comptechschool.populartopicstracking.rest.dto.IdentifierDto;
+import com.comptechschool.populartopicstracking.rest.service.impl.IdentifierServiceImplSPK;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

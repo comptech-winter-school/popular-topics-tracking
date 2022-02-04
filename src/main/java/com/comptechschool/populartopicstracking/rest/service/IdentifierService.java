@@ -1,6 +1,6 @@
-package com.comptechschool.populartopicstracking.SpringApp.service;
+package com.comptechschool.populartopicstracking.rest.service;
 
-import com.comptechschool.populartopicstracking.SpringApp.dto.IdentifierDto;
+import com.comptechschool.populartopicstracking.rest.dto.IdentifierDto;
 
 import java.util.List;
 

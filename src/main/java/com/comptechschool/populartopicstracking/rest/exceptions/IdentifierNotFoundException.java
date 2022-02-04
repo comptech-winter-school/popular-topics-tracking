@@ -1,4 +1,4 @@
-package com.comptechschool.populartopicstracking.SpringApp.exceptions;
+package com.comptechschool.populartopicstracking.rest.exceptions;
 
 public class IdentifierNotFoundException extends RuntimeException {
 

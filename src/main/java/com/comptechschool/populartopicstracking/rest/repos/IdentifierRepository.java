@@ -1,6 +1,6 @@
-package com.comptechschool.populartopicstracking.SpringApp.repos;
+package com.comptechschool.populartopicstracking.rest.repos;
 
-import com.comptechschool.populartopicstracking.SpringApp.entity.Identifier;
+import com.comptechschool.populartopicstracking.rest.entity.Identifier;
 import org.springframework.data.cassandra.repository.CassandraRepository;
 import org.springframework.data.cassandra.repository.Query;
 
