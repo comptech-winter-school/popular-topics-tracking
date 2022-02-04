@@ -7,7 +7,7 @@ import com.comptechschool.populartopicstracking.operator.topn.sort.EntityHeapSor
 import com.comptechschool.populartopicstracking.source.DataSource;
 import org.apache.flink.api.common.state.MapState;
 import org.apache.flink.api.common.state.MapStateDescriptor;
-import org.apache.flink.api.java.tuple.Tuple3;
+import org.apache.flink.api.java.tuple.Tuple4;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
 
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class EntityProcessFunction extends AbstractProcess  {
+public class EntityProcessFunction extends AbstractProcess {
 
     MapStateDescriptor<Long, AdvanceInputEntity> descriptorOfAllMap =
             new MapStateDescriptor<Long, AdvanceInputEntity>("id_freq_all_map", Long.class, AdvanceInputEntity.class);
@@ -29,12 +29,11 @@ public class EntityProcessFunction extends AbstractProcess  {
         this.topN = topN;
     }
 
-    public EntityProcessFunction(int topN , DataSource dataSource) {
+    public EntityProcessFunction(int topN, DataSource dataSource) {
         super();
         this.topN = topN;
-        this.dataSource=dataSource;
+        this.dataSource = dataSource;
     }
-
 
 
     @Override
@@ -51,18 +50,18 @@ public class EntityProcessFunction extends AbstractProcess  {
      */
 
     @Override
-    public void process(Context context, Iterable<InputEntity> iterable, Collector<List<Tuple3<Long, Long, String>>> collector) {
+    public void process(Context context, Iterable<InputEntity> iterable, Collector<List<Tuple4<Long, Long, String, Long>>> collector) {
         long start = System.currentTimeMillis();
 
-        List<Tuple3<Long, Long, String>> tuples = new ArrayList<>();
-
+        List<Tuple4<Long, Long, String, Long>> tuples = new ArrayList<>();
         AdvanceInputEntity[] advanceInputEntities = new CountMinSketchOptimization<InputEntity>().getFrequencyArray(iterable);
         for (int i = 0; i < advanceInputEntities.length; i++) {
             AdvanceInputEntity advanceInputEntity = advanceInputEntities[i];
-            tuples.add(new Tuple3<>(
+            tuples.add(new Tuple4<>(
                     advanceInputEntity.getInputEntity().getId(),
                     advanceInputEntity.getEventFrequency(),
-                    advanceInputEntity.getInputEntity().getActionType()));
+                    advanceInputEntity.getInputEntity().getActionType()
+                    , advanceInputEntity.getInputEntity().getTimestamp()));
         }
         System.out.println("\n" + "=====Result separator=====" + "\n");
 
