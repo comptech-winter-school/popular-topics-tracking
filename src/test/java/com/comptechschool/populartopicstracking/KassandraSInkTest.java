@@ -46,10 +46,6 @@ public class KassandraSInkTest {
                 .returns(TypeInformation.of(new TypeHint<Tuple4<Long, Long, String, Long>>() {
                 }));
 
-
-//        result.print();
-//        System.out.println(env.getExecutionPlan());
-
         CassandraSink.addSink(result)
                 .setQuery("INSERT INTO comptech.topn(id, frequency, action, timestamp) values (?, ?, ?, ?);")
                 .setHost("127.0.0.1")
@@ -61,8 +57,6 @@ public class KassandraSInkTest {
     }
 
     private void initProperties(StreamExecutionEnvironment env) {
-
-
         env.setParallelism(5);
         env.enableCheckpointing(1000 * 60 * 10);
         env.getCheckpointConfig().setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);

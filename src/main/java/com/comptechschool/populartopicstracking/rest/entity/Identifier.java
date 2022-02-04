@@ -11,6 +11,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Table("topn")  //or db2/db3
 public class Identifier implements Serializable, Comparable<Identifier> {
+
     @PrimaryKey
     private Long id;
     private String action;

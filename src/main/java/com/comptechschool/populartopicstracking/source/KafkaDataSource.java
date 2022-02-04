@@ -26,7 +26,7 @@ public class KafkaDataSource {
                 .setBootstrapServers(bootstrapServer)
                 .setTopics(topic)
                 .setGroupId(groupId)
-                .setStartingOffsets(OffsetsInitializer.latest()) //TODO: set OffsetsInitializer.latest() when app will have done
+                .setStartingOffsets(OffsetsInitializer.latest())
                 .setValueOnlyDeserializer(new SimpleStringSchema())
                 .build();
     }

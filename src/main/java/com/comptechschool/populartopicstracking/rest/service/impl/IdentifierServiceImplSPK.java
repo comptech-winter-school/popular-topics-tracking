@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-
 //For Single Primary Key (SPK)
 @Service
 @Slf4j
@@ -31,7 +30,10 @@ public class IdentifierServiceImplSPK implements IdentifierService {
         List<Identifier> allIdentifiers = identifierRepository.findAll();
         Collections.sort(allIdentifiers);
         for (int i = 0; i < n; i++) {
-            identifierTopNDto.add(new IdentifierDto(allIdentifiers.get(i).getId(), allIdentifiers.get(i).getAction(), allIdentifiers.get(i).getFrequency()));
+            identifierTopNDto.add(new IdentifierDto(
+                    allIdentifiers.get(i).getId(),
+                    allIdentifiers.get(i).getAction(),
+                    allIdentifiers.get(i).getFrequency()));
         }
         log.info("IN getTopNIdentifiers  - top N identifiers: {}", identifierTopNDto);
         return identifierTopNDto;
@@ -55,7 +57,10 @@ public class IdentifierServiceImplSPK implements IdentifierService {
         List<IdentifierDto> identifiersDto = new ArrayList<>();
         List<Identifier> identifierList = identifierRepository.findAll();
         for (Identifier identifier : identifierList) {
-            identifiersDto.add(new IdentifierDto(identifier.getId(), identifier.getAction(), identifier.getFrequency()));
+            identifiersDto.add(new IdentifierDto(
+                    identifier.getId(),
+                    identifier.getAction(),
+                    identifier.getFrequency()));
         }
         log.info("IN getAllQuestions - {} Identifiers found", identifierList.size());
         return identifiersDto;

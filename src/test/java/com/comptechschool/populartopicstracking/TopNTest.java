@@ -57,7 +57,6 @@ public class TopNTest {
                 .process(new AdvancedEntityProcessFunction(n))
                 .addSink(new PrintSinkFunction<>());
 
-        // TODO Cassandra Sink
         env.execute("Real-time entity topN");
     }
 
