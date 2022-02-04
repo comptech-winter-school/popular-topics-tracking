@@ -6,11 +6,13 @@ import com.comptechschool.populartopicstracking.operator.topn.processimpl.advanc
 import com.comptechschool.populartopicstracking.operator.topn.sort.EntityHeapSortUtils;
 import org.apache.flink.api.common.state.MapState;
 import org.apache.flink.api.common.state.MapStateDescriptor;
-import org.apache.flink.api.java.tuple.Tuple3;
+import org.apache.flink.api.java.tuple.Tuple4;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.util.Collector;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public class AdvancedEntityProcessFunction extends AbstractProcess {
 
@@ -31,17 +33,17 @@ public class AdvancedEntityProcessFunction extends AbstractProcess {
     }
 
     @Override
-    public void process(Context context, Iterable<InputEntity> iterable, Collector<List<Tuple3<Long, Long, String>>> collector) throws Exception {
+    public void process(Context context, Iterable<InputEntity> iterable, Collector<List<Tuple4<Long, Long, String, Long>>> collector) throws Exception {
 
         long start = System.currentTimeMillis();
-        List<Tuple3<Long, Long, String>> tuples = new ArrayList<>();
+        List<Tuple4<Long, Long, String, Long>> tuples = new ArrayList<>();
         //Map<Long , InputEntity> entityMap = new HashMap<>();
 
         AdvancedCountMinSketchAlg sketch = new AdvancedCountMinSketchAlg(0.0001, 0.999, 1);
         //String type = iterable.iterator().next().getActionType();
         String type = "like";
 
-        int size=0;
+        int size = 0;
         for (InputEntity entity : iterable) {
             Long id = entity.getId();
             sketch.add(id, 1);
@@ -55,10 +57,10 @@ public class AdvancedEntityProcessFunction extends AbstractProcess {
         AdvanceInputEntity[] inputEntities = new AdvanceInputEntity[size];
 
         int count = 0;
-        for (InputEntity inputEntity:allMap.values()) {
+        for (InputEntity inputEntity : allMap.values()) {
             long id = inputEntity.getId();
             long freq = sketch.estimateCount(id);
-            tuples.add(new Tuple3<>(id, freq, type));
+            tuples.add(new Tuple4<>(id, freq, type, inputEntity.getTimestamp()));
             inputEntities[count] = new AdvanceInputEntity(freq, new InputEntity(id, 0L, type));
             count++;
         }

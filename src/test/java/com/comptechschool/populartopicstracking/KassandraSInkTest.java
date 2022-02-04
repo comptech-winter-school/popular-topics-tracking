@@ -11,6 +11,7 @@ import org.apache.flink.api.common.restartstrategy.RestartStrategies;
 import org.apache.flink.api.common.typeinfo.TypeHint;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.api.java.tuple.Tuple3;
+import org.apache.flink.api.java.tuple.Tuple4;
 import org.apache.flink.streaming.api.CheckpointingMode;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.CheckpointConfig;
@@ -31,18 +32,18 @@ public class KassandraSInkTest {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         initProperties(env);
 
-        DataStream<Tuple3<Long, Long, String>> result = env.addSource(new DataSource(10000L))
+        DataStream<Tuple4<Long, Long, String , Long>> result = env.addSource(new DataSource(10000L))
                 .map(inputEntity -> inputEntity)
                 .filter(new InputEntityFilter())
                 .keyBy(new InputEntityKeyBy())
                 //.assignTimestampsAndWatermarks(new EntityAssignerWaterMarks(Time.seconds(5)))
-                .assignTimestampsAndWatermarks(WatermarkStrategy.forBoundedOutOfOrderness(Duration.ofSeconds(20)))
-                .windowAll(TumblingEventTimeWindows.of(Time.seconds(30)))
+                .assignTimestampsAndWatermarks(WatermarkStrategy.forBoundedOutOfOrderness(Duration.ofSeconds(5)))
+                .windowAll(TumblingEventTimeWindows.of(Time.seconds(20)))
                 .allowedLateness(Time.seconds(20))
-                .trigger(new EntityTrigger(50000))//clean up the window data
+                .trigger(new EntityTrigger(500000))//clean up the window data
                 .process(new DefaultEntityProcessFunction(n))
                 .flatMap(new ListToTupleFlatMapper())
-                .returns(TypeInformation.of(new TypeHint<Tuple3<Long, Long, String>>() {
+                .returns(TypeInformation.of(new TypeHint<Tuple4<Long, Long, String, Long>>() {
                 }));
 
         /**/
@@ -50,12 +51,12 @@ public class KassandraSInkTest {
         result.print();
         System.out.println(env.getExecutionPlan());
 
-//        CassandraSink.addSink(result)
-//                .setQuery("INSERT INTO example.testdb(id, frequency, action) values (?, ?, ?);")
-//                .setHost("127.0.0.1")
-//                .build()
-//                .name("cassandra Sink")
-//                .disableChaining();
+        CassandraSink.addSink(result)
+                .setQuery("INSERT INTO example.db2(id, frequency, action, timestamp) values (?, ?, ?, ?);")
+                .setHost("127.0.0.1")
+                .build()
+                .name("cassandra Sink")
+                .disableChaining();
 
         env.execute("kafka- 3.0 source, cassandra-4.1.0 sink, tuple3");
     }
