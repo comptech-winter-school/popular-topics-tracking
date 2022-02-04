@@ -3,7 +3,6 @@ package com.comptechschool.populartopicstracking;
 import com.comptechschool.populartopicstracking.function.ListToTupleFlatMapper;
 import com.comptechschool.populartopicstracking.operator.topn.EntityTrigger;
 import com.comptechschool.populartopicstracking.operator.topn.processimpl.AdvancedEntityProcessFunction;
-import com.comptechschool.populartopicstracking.operator.topn.processimpl.EntityProcessFunction;
 import com.comptechschool.populartopicstracking.source.DataSource;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.restartstrategy.RestartStrategies;
@@ -41,26 +40,7 @@ public class TopNTest {
         env.execute("Real-time entity topN");
     }
 
-    @Test
-    public void topNTest() throws Exception {
-        int n = 10;
 
-        DataSource dataSource = new DataSource(50000L); //FIXME
-        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        initProperties(env);
-
-        env.addSource(dataSource)
-                //.assignTimestampsAndWatermarks(new EntityAssignerWaterMarks(Time.seconds(5)))
-                .assignTimestampsAndWatermarks(WatermarkStrategy.forBoundedOutOfOrderness(Duration.ofSeconds(20)))
-                .windowAll(TumblingEventTimeWindows.of(Time.seconds(30)))
-                .allowedLateness(Time.seconds(20))
-                .trigger(new EntityTrigger(500000))//clean up the window data
-                .process(new EntityProcessFunction(n));
-        //.addSink(new PrintSinkFunction<>());
-
-            env.execute("Real-time entity topN");
-
-    }
 
     @Test
     public void filterKeyByTopNTest() throws Exception {
@@ -77,7 +57,7 @@ public class TopNTest {
                 .windowAll(TumblingEventTimeWindows.of(Time.seconds(30)))
                 .allowedLateness(Time.seconds(20))
                 .trigger(new EntityTrigger(50000))//clean up the window data
-                .process(new EntityProcessFunction(n))
+                .process(new AdvancedEntityProcessFunction(n))
                 .addSink(new PrintSinkFunction<>());
 
         // TODO Cassandra Sink
