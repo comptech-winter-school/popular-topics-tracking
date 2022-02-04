@@ -20,6 +20,6 @@ public class Identifier implements Serializable, Comparable<Identifier> {
 
     @Override
     public int compareTo(Identifier identifier) {
-        return (int) (this.frequency - identifier.frequency);
+        return (int) (identifier.frequency - this.frequency);
     }
 }

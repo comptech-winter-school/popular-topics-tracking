@@ -25,7 +25,7 @@ public class IdentifierRestController {
         this.identifierService = identifierService;
     }
 
-    @GetMapping(value = "/getById/{id}")
+    @GetMapping(value = "/get_by_id/{id}")
     public ResponseEntity<IdentifierDto> getIdentifierById(@PathVariable long id) {
 
         IdentifierDto identifier = identifierService.getIdentifierById(id);
@@ -33,7 +33,7 @@ public class IdentifierRestController {
         return new ResponseEntity<>(identifier, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/getTopN/{N}")
+    @GetMapping(value = "/get_top/{n}")
     public ResponseEntity<List<IdentifierDto>> getTopNIdentifiers(@PathVariable int n) {
 
         List<IdentifierDto> identifierDtoList = identifierService.getTopNIdentifiers(n);
@@ -41,7 +41,7 @@ public class IdentifierRestController {
         return new ResponseEntity<>(identifierDtoList, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/getAll")
+    @GetMapping(value = "/get_all")
     public ResponseEntity<List<IdentifierDto>> getAllIdentifiers() {
 
         List<IdentifierDto> identifierDtoList = identifierService.getAllIdentifiers();
