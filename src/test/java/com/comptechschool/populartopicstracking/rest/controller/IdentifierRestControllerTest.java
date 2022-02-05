@@ -20,7 +20,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -71,7 +70,6 @@ class IdentifierRestControllerTest {
         identifierDtoList.add(identifierDto2);
         identifierDtoList.add(identifierDto3);
 
-
         when(identifierService.getTopNIdentifiers(3))
                 .thenReturn(identifierDtoList);
 
@@ -103,7 +101,6 @@ class IdentifierRestControllerTest {
         identifierDtoList.add(identifierDto1);
         identifierDtoList.add(identifierDto2);
         identifierDtoList.add(identifierDto3);
-
 
         when(identifierService.getTopNIdentifiers(3))
                 .thenReturn(identifierDtoList);

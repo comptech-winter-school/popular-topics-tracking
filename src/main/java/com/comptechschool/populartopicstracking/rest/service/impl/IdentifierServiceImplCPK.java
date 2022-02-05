@@ -28,24 +28,27 @@ public class IdentifierServiceImplCPK implements IdentifierService {
 
     @Override
     public List<IdentifierDto> getTopNIdentifiers(int n) {
-        Map<Long, IdentifierDto> identifiersDto = new TreeMap<>();
+        Map<Long, IdentifierDto> identifiersMapDto = new TreeMap<>();
         List<Identifier> identifierList = identifierRepository.findAll();
         Collections.sort(identifierList);
         for (Identifier identifier : identifierList) {
-            if (identifiersDto.containsKey(identifier.getId())) {
-                Long freq = identifiersDto.get(identifier.getId()).getFrequency();
+            if (identifiersMapDto.containsKey(identifier.getId())) {
+                Long freq = identifiersMapDto.get(identifier.getId()).getFrequency();
                 Long sum = identifier.getFrequency() + freq;
-                identifiersDto.put(identifier.getId(),
+                identifiersMapDto.put(identifier.getId(),
                         new IdentifierDto(identifier.getId(), identifier.getAction(), sum));
             } else {
-                identifiersDto.put(identifier.getId(),
+                identifiersMapDto.put(identifier.getId(),
                         new IdentifierDto(identifier.getId(),
                                 identifier.getAction(),
                                 identifier.getFrequency()));
             }
         }
         List<IdentifierDto> identifierDtos = new ArrayList<>();
-        identifierDtos = (List<IdentifierDto>) identifiersDto.values();
+        //identifierDtos = (List<IdentifierDto>) identifiersDto.values();
+        for (int i = 1; i < identifiersMapDto.size()+1; i++) {
+            identifierDtos.add(identifiersMapDto.get((long)i));
+        }
         log.info("IN getTopNIdentifiers  - top N identifiers: {}", identifierList);
         return identifierDtos;
 
@@ -71,22 +74,24 @@ public class IdentifierServiceImplCPK implements IdentifierService {
 
     @Override
     public List<IdentifierDto> getAllIdentifiers() {
-        Map<Long, IdentifierDto> identifiersDto = new TreeMap<>();
+        Map<Long, IdentifierDto> identifierDtoTreeMap = new TreeMap<>();
         List<Identifier> identifierList = identifierRepository.findAll();
         for (Identifier identifier : identifierList) {
-            if (identifiersDto.containsKey(identifier.getId())) {
-                Long freq = identifiersDto.get(identifier.getId()).getFrequency();
+            if (identifierDtoTreeMap.containsKey(identifier.getId())) {
+                Long freq = identifierDtoTreeMap.get(identifier.getId()).getFrequency();
                 Long sum = identifier.getFrequency() + freq;
-                identifiersDto.put(identifier.getId(),
+                identifierDtoTreeMap.put(identifier.getId(),
                         new IdentifierDto(identifier.getId(), identifier.getAction(), sum));
             } else {
-                identifiersDto.put(identifier.getId(), new IdentifierDto(identifier.getId(),
+                identifierDtoTreeMap.put(identifier.getId(), new IdentifierDto(identifier.getId(),
                         identifier.getAction(),
                         identifier.getFrequency()));
             }
         }
         List<IdentifierDto> identifierDtos = new ArrayList<>();
-        identifierDtos = (List<IdentifierDto>) identifiersDto.values();
+        for (int i = 1; i < identifierDtoTreeMap.size()+1; i++) {
+            identifierDtos.add(identifierDtoTreeMap.get((long)i));
+        }
         log.info("IN getAllIdentifiers - {} Identifiers found", identifierList.size());
         return identifierDtos;
     }

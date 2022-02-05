@@ -19,20 +19,16 @@ public class TopNTimeTest {
 
     int n = 10;
 
-
     @Test
     public void defaultTopNTest() throws Exception {
-
-
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         initProperties(env);
 
         env.addSource(new DataSource(50000L))
-                //.assignTimestampsAndWatermarks(new EntityAssignerWaterMarks(Time.seconds(5)))
-                .assignTimestampsAndWatermarks(WatermarkStrategy.forBoundedOutOfOrderness(Duration.ofSeconds(20)))
-                .windowAll(TumblingEventTimeWindows.of(Time.seconds(30)))
+                .assignTimestampsAndWatermarks(WatermarkStrategy.forBoundedOutOfOrderness(Duration.ofSeconds(5)))
+                .windowAll(TumblingEventTimeWindows.of(Time.seconds(20)))
                 .allowedLateness(Time.seconds(20))
-                .trigger(new EntityTrigger(100000))//clean up the window data
+                .trigger(new EntityTrigger(10_000_000))//clean up the window data
                 .process(new DefaultEntityProcessFunction(n));
 
         env.execute("Real-time entity topN");
@@ -40,21 +36,18 @@ public class TopNTimeTest {
 
     @Test
     public void advancedTopNTest() throws Exception {
-
-
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         initProperties(env);
 
         env.addSource(new DataSource(50000L))
-                .assignTimestampsAndWatermarks(WatermarkStrategy.forBoundedOutOfOrderness(Duration.ofSeconds(20)))
-                .windowAll(TumblingEventTimeWindows.of(Time.seconds(30)))
+                .assignTimestampsAndWatermarks(WatermarkStrategy.forBoundedOutOfOrderness(Duration.ofSeconds(5)))
+                .windowAll(TumblingEventTimeWindows.of(Time.seconds(20)))
                 .allowedLateness(Time.seconds(20))
-                .trigger(new EntityTrigger(1000000))//clean up the window data
+                .trigger(new EntityTrigger(10_000_000))//clean up the window data
                 .process(new AdvancedEntityProcessFunction(n));
 
         env.execute("Real-time entity topN");
     }
-
 
     private void initProperties(StreamExecutionEnvironment env) {
         //Global parallelism
