@@ -6,7 +6,7 @@ Popular-topics-tracking представляет собой реализацию
 
 - src - код проекта
 
-- pom.xml - фреймворк для автоматизации сборки проекта
+- pom.xml - информация о деталях проекта
 
 ## Назначение
 
@@ -29,7 +29,7 @@ Popular-topics-tracking представляет собой реализацию
 
 ## Установка и настройка
 
-- git clone https://github.com/comptech-winter-school/popular-topics-tracking.git
+- `git clone https://github.com/comptech-winter-school/popular-topics-tracking.git`
 
 - [Apache Kafka](https://kafka.apache.org/)
 
@@ -54,7 +54,7 @@ Popular-topics-tracking представляет собой реализацию
 
 ## Использование
 
-Наш сервис предоставляет rest-api, ознакомиться подроблее в формате swagger можно [здесь](https://app.swaggerhub.com/apis-docs/Popov-Dmitry/popular-topics-tracking/1.0.0#/).
+Наш сервис предоставляет rest-api, ознакомиться подробнее в формате swagger можно [здесь](https://app.swaggerhub.com/apis-docs/Popov-Dmitry/popular-topics-tracking/1.0.0#/).
 
 ![image](./docs/api.png)
 
