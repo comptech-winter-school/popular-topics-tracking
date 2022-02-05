@@ -1,4 +1,4 @@
-package com.comptechschool.populartopicstracking.SpringApp.controller;
+package com.comptechschool.populartopicstracking.rest.controller;
 
 import com.comptechschool.populartopicstracking.rest.dto.IdentifierDto;
 import com.comptechschool.populartopicstracking.rest.service.impl.IdentifierServiceImplSPK;
