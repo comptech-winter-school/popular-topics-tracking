@@ -5,6 +5,7 @@ import com.comptechschool.populartopicstracking.function.InputEntityKeyBy;
 import com.comptechschool.populartopicstracking.function.JsonToInputEntityMapper;
 import com.comptechschool.populartopicstracking.function.ListToTupleFlatMapper;
 import com.comptechschool.populartopicstracking.operator.topn.EntityTrigger;
+import com.comptechschool.populartopicstracking.operator.topn.processimpl.AdvancedEntityProcessFunction;
 import com.comptechschool.populartopicstracking.operator.topn.processimpl.DefaultEntityProcessFunction;
 import com.comptechschool.populartopicstracking.source.KafkaDataSource;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
@@ -40,15 +41,15 @@ public class FlinkRunner implements ApplicationRunner {
                         WatermarkStrategy.forMonotonousTimestamps(),
                         "Kafka Source"
                 )
-                .map(new JsonToInputEntityMapper())
-                .filter(new InputEntityFilter())
+                .map(new JsonToInputEntityMapper()).name("JsonToInputEntityMapper")
+                .filter(new InputEntityFilter()).name("InputEntityFilter")
                 .keyBy(new InputEntityKeyBy())
                 .assignTimestampsAndWatermarks(WatermarkStrategy.forBoundedOutOfOrderness(Duration.ofSeconds(5)))
                 .windowAll(TumblingEventTimeWindows.of(Time.seconds(20)))
                 .allowedLateness(Time.seconds(20))
                 .trigger(new EntityTrigger(500000))//clean up the window data
-                .process(new DefaultEntityProcessFunction(n))
-                .flatMap(new ListToTupleFlatMapper())
+                .process(new AdvancedEntityProcessFunction(n)).name("AdvancedEntityProcessFunction")
+                .flatMap(new ListToTupleFlatMapper()).name("ListToTupleFlatMapper")
                 .returns(TypeInformation.of(new TypeHint<Tuple4<Long, Long, String, Long>>() {
                 }));
 
@@ -59,11 +60,12 @@ public class FlinkRunner implements ApplicationRunner {
                 .name("cassandra Sink")
                 .disableChaining();
 
+        System.out.println(env.getExecutionPlan());
         env.execute("kafka- 3.0 source, cassandra-4.0.1 sink, tuple4");
     }
 
     private void initProperties(StreamExecutionEnvironment env) {
-        env.setParallelism(5);
+        env.setParallelism(8);
         env.enableCheckpointing(1000 * 60 * 10);
         env.getCheckpointConfig().setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);
         //Restart three times after failure, each interval of 20s
