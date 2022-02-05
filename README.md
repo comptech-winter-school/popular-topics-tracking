@@ -37,23 +37,36 @@ Popular-topics-tracking представляет собой реализацию
 
 - [Apache Cassandra](https://cassandra.apache.org/)
 
+В файле `config.properties` указать следующие параметры:
+
+- filter.action-type - тип событий, для которых необходимо считать topN
+- kafka.bootstrap-server - ip-адрес kafka сервера
+- kafka.input-topic - kafka топик из которого поступают идентификаторы
+- kafka.group-id - kafka group id
+
+В файле `aapplication.properties` указать следующие параметры:
+
+- server.port - порт приложения
+- spring.data.cassandra.contact-points - ip-адрес cassandra сервера
+- spring.data.cassandra.keyspace-name - keyspace базы данных в cassandra
+
 ### Зависимости
 
-kafka-flink(default impl topn)-cassandra
-
-kafka-flink(sketch impl topn)-cassandra
+Необходимые зависимости указаны в файле `pom.xml`
 
 ## Использование
 
-Подаем поток любых данных. Получаем базу данных с итоговыми результатами.
+Наш сервис предоставляет rest-api, ознакомиться подроблее в формате swagger можно [здесь](https://app.swaggerhub.com/apis-docs/Popov-Dmitry/popular-topics-tracking/1.0.0#/).
+
+![image](./docs/api.png)
 
 ## Команда
 
-- Екименко Евгений – разработчик
+- Екименко Евгений – разработчик [@EvgeniyEkimenko](https://github.com/EvgeniyEkimenko)
 
-- Попов Дмитрий – разработчик
+- Попов Дмитрий – разработчик [@Popov-Dmitry](https://github.com/Popov-Dmitry)
 
-- Кононова Полина – технический писатель
+- Кононова Полина – технический писатель [@polina-kononova](https://github.com/polina-kononova)
 
 ## Кураторы
 
