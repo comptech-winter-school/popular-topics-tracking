@@ -18,7 +18,7 @@ Popular-topics-tracking представляет собой реализацию
 
 
 
-![image](https://user-images.githubusercontent.com/98398064/152352936-4a7a607f-df7f-463e-bde0-13e51bc0ece7.png)
+![image](https://github.com/comptech-winter-school/popular-topics-tracking/blob/main/docs/project_design.jpg)
 
 ![image](https://user-images.githubusercontent.com/98398064/152637165-182f1a2a-9ad8-4127-abb1-59d0ff382144.png)
 
